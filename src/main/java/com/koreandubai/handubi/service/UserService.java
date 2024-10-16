@@ -1,0 +1,43 @@
+package com.koreandubai.handubi.service;
+
+import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
+import com.koreandubai.handubi.domain.User;
+import com.koreandubai.handubi.repository.UserRepository;
+import com.koreandubai.handubi.global.util.CryptoData;
+import com.koreandubai.handubi.global.util.Encryptor;
+import com.koreandubai.handubi.global.util.SaltGenerator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+
+@RequiredArgsConstructor
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Qualifier("sha256Encryptor")
+    private final Encryptor encryptor;
+
+    public void join(SignUpRequestDto dto){
+
+        if (checkIsUserExist(dto.getEmail())) {
+            throw new IllegalArgumentException("There is already a user with that email");
+        }
+
+        String salt = SaltGenerator.generateSalt();
+        CryptoData cryptoData = CryptoData.WithSaltBuilder()
+                .plainText(dto.getPassword())
+                .salt(salt)
+                .build();
+        String encryptedPassword = encryptor.encrypt(cryptoData);
+        User user = dto.toEntity(salt, encryptedPassword);
+
+        userRepository.save(user);
+    }
+
+    public boolean checkIsUserExist (String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+}
