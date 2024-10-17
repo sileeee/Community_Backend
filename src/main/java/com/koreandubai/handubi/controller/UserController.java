@@ -8,9 +8,9 @@ import com.koreandubai.handubi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -19,15 +19,15 @@ public class UserController {
 
     private final UserService userService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users/sign-up")
-    public ResponseEntity<SuccessResponse> signUp(@Valid @RequestBody SignUpRequestDto requestDto) {
+    public SuccessResponse signUp(@Valid @RequestBody final SignUpRequestDto requestDto) {
 
         userService.join(requestDto);
-        SuccessResponse res = SuccessResponse.builder()
+
+        return SuccessResponse.builder()
                 .status(StatusEnum.CREATED)
                 .message("Successfully registered")
                 .build();
-
-        return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 }
