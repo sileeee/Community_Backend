@@ -9,6 +9,7 @@ import com.koreandubai.handubi.global.util.SaltGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -20,9 +21,14 @@ public class UserService {
     @Qualifier("sha256Encryptor")
     private final Encryptor encryptor;
 
+    @Transactional
     public void join(SignUpRequestDto dto){
 
-        if (checkIsUserExist(dto.getEmail())) {
+        if (checkIsNameExist(dto.getName())){
+            throw new IllegalArgumentException("There is already a user with that name");
+        }
+
+        if (checkIsEmailExist(dto.getEmail())) {
             throw new IllegalArgumentException("There is already a user with that email");
         }
 
@@ -37,7 +43,11 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean checkIsUserExist (String email) {
+    public boolean checkIsNameExist (String name) {
+        return userRepository.findByName(name).isPresent();
+    }
+
+    public boolean checkIsEmailExist (String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 }
