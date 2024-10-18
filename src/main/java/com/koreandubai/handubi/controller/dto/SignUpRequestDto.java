@@ -49,7 +49,7 @@ public class SignUpRequestDto {
                 .password(encryptedPassword)
                 .phone(phone)
                 .birthday(birthday)
-                .userType(userType)
+                .userType(UserType.USER)
                 .build();
     }
 }
