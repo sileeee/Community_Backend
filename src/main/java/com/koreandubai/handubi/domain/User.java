@@ -15,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(unique = true, nullable = false)
@@ -27,6 +27,8 @@ public class User {
     private String salt;
     private String phone;
     private LocalDate birthday;
+
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
     @Builder
