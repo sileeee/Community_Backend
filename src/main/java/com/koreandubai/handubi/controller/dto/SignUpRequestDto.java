@@ -14,22 +14,22 @@ import java.time.LocalDate;
 public class SignUpRequestDto {
 
     @NotBlank(message = "You should enter a name.")
-    private String name;
+    private final String name;
 
     @NotBlank(message = "You should enter a email.")
     @Email(message = "You should ensure email format")
-    private String email;
+    private final String email;
 
     @NotBlank(message = "You should enter a password.")
-    private String password;
+    private final String password;
 
     @NotBlank(message = "You should enter a phone number.")
     @Pattern(regexp = "[0-9]{10,11}", message = "You should enter a phone number with 10-11 digits.")
-    private String phone;
+    private final String phone;
 
-    private LocalDate birthday;
+    private final LocalDate birthday;
 
-    private UserType userType;
+    private final UserType userType;
 
     @Builder
     public SignUpRequestDto(String name, String email, String password, String phone, LocalDate birthday, UserType userType) {

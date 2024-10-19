@@ -41,4 +41,10 @@ public class UserController {
                 .message("Successfully login")
                 .build();
     }
+
+    @GetMapping("/logout")
+    public void logoutUser(){
+
+        loginService.logout();
+    }
 }

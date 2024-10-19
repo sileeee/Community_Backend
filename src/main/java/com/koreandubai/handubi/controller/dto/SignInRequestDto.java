@@ -10,10 +10,10 @@ public class SignInRequestDto {
 
     @NotBlank(message = "You should enter a email.")
     @Email(message = "You should ensure email format.")
-    private String email;
+    private final String email;
 
     @NotBlank(message = "You should enter a password.")
-    private String password;
+    private final String password;
 
     @Builder
     public SignInRequestDto(String email, String password) {
