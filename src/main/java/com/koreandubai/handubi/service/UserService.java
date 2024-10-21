@@ -56,6 +56,10 @@ public class UserService {
 
     public void updateUserInfo(UpdateUserInfoRequestDto dto){
 
+        if (checkIsNameExist(dto.getName())){
+            throw new IllegalArgumentException("There is already a user with that name");
+        }
+
         Optional<User> updateUser = userRepository.findByEmail(dto.getEmail());
 
         if(updateUser.isEmpty())
