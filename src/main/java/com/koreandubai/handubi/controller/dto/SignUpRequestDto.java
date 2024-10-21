@@ -29,16 +29,13 @@ public class SignUpRequestDto {
 
     private final LocalDate birthday;
 
-    private final UserType userType;
-
     @Builder
-    public SignUpRequestDto(String name, String email, String password, String phone, LocalDate birthday, UserType userType) {
+    public SignUpRequestDto(String name, String email, String password, String phone, LocalDate birthday) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.birthday = birthday;
-        this.userType = userType;
     }
 
     public User toEntity(String salt, String encryptedPassword) {

@@ -1,6 +1,7 @@
 package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
+import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.repository.UserRepository;
 import com.koreandubai.handubi.global.util.CryptoData;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -49,5 +52,28 @@ public class UserService {
 
     public boolean checkIsEmailExist (String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    public void updateUserInfo(UpdateUserInfoRequestDto dto){
+
+        Optional<User> updateUser = userRepository.findByEmail(dto.getEmail());
+
+        if(updateUser.isEmpty())
+            throw new IllegalArgumentException("There isn't a user with that email");
+
+        String salt = SaltGenerator.generateSalt();
+        CryptoData cryptoData = CryptoData.WithSaltBuilder()
+                .plainText(dto.getPassword())
+                .salt(salt)
+                .build();
+        String encryptedPassword = encryptor.encrypt(cryptoData);
+
+        updateUser.ifPresent(selectUser->{
+            selectUser.setName(dto.getName());
+            selectUser.setPassword(encryptedPassword);
+            selectUser.setPhone(dto.getPhone());
+
+            userRepository.save(selectUser);
+        });
     }
 }
