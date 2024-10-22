@@ -1,6 +1,7 @@
 package com.koreandubai.handubi.controller;
 
 
+import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
 import com.koreandubai.handubi.controller.dto.SignInRequestDto;
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.global.common.StatusEnum;
@@ -46,5 +47,14 @@ public class UserController {
     public void logoutUser(){
 
         loginService.logout();
+    }
+
+    @PutMapping("/update")
+    public SuccessResponse updateMember(@Valid @RequestBody UpdateUserInfoRequestDto requestDto){
+        userService.updateUserInfo(requestDto);
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully update user information")
+                .build();
     }
 }
