@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.koreandubai.handubi.global.common.PageSize.NOMAL_PAGE_SIZE;
@@ -35,7 +36,10 @@ public class PostService {
         List<String> userNames = new ArrayList<>();
         for (Post post : posts) {
             Optional<User> user = userRepository.findById(post.getUserId());
-            user.ifPresent(value -> userNames.add(value.getName()));
+            if(user.isEmpty()) {
+                throw new NoSuchElementException("User with ID " + post.getUserId() + " not found");
+            }
+            userNames.add(user.get().getName());
         }
 
         return SimplePost.toList(posts, userNames);
