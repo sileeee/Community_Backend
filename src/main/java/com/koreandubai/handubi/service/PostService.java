@@ -6,7 +6,7 @@ import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.SessionKey;
-import com.koreandubai.handubi.global.exception.NoAuthorizationData;
+import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.repository.PostRepository;
 import com.koreandubai.handubi.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +53,7 @@ public class PostService {
     public void createPost(HttpServletRequest request, CategoryType category, CreatePostRequestDto dto) {
 
         HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(NoAuthorizationData::new);
+        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
         Post post = Post.builder()
                 .category(category)
