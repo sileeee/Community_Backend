@@ -6,8 +6,6 @@ import lombok.Getter;
 @Getter
 public class UpdateUserInfoRequestDto {
 
-    private final String email;
-
     private final String name;
 
     private final String password;
@@ -16,8 +14,7 @@ public class UpdateUserInfoRequestDto {
 
 
     @Builder
-    public UpdateUserInfoRequestDto(String email, String name, String password, String phone) {
-        this.email = email;
+    public UpdateUserInfoRequestDto(String name, String password, String phone) {
         this.name = name;
         this.password = password;
         this.phone = phone;

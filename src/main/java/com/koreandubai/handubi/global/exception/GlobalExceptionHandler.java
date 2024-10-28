@@ -15,9 +15,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public FailResponse handleIllegalArgumentException(IllegalArgumentException e){
-        log.error("IllegalArgumentException", e);
+
         return FailResponse.builder()
                 .status(StatusEnum.BAD_REQUEST)
+                .errorMessage(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public FailResponse handleUnathorizedException(UnauthorizedException e){
+
+        return FailResponse.builder()
+                .status(StatusEnum.UNAUTHORIZED)
                 .errorMessage(e.getMessage())
                 .build();
     }

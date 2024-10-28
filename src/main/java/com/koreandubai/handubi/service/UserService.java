@@ -2,11 +2,12 @@ package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
+import com.koreandubai.handubi.domain.EncryptedPassword;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.repository.UserRepository;
-import com.koreandubai.handubi.global.util.CryptoData;
-import com.koreandubai.handubi.global.util.Encryptor;
-import com.koreandubai.handubi.global.util.SaltGenerator;
+import com.koreandubai.handubi.global.util.crypt.CryptoData;
+import com.koreandubai.handubi.global.util.crypt.Encryptor;
+import com.koreandubai.handubi.global.util.crypt.SaltGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -35,13 +36,8 @@ public class UserService {
             throw new IllegalArgumentException("There is already a user with that email");
         }
 
-        String salt = SaltGenerator.generateSalt();
-        CryptoData cryptoData = CryptoData.WithSaltBuilder()
-                .plainText(dto.getPassword())
-                .salt(salt)
-                .build();
-        String encryptedPassword = encryptor.encrypt(cryptoData);
-        User user = dto.toEntity(salt, encryptedPassword);
+        EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
+        User user = dto.toEntity(pw.getSalt(), pw.getPassword());
 
         userRepository.save(user);
     }
@@ -54,27 +50,33 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void updateUserInfo(UpdateUserInfoRequestDto dto){
+    private EncryptedPassword encryptPasswordWithSalt(String plainPassword) {
+        String salt = SaltGenerator.generateSalt();
+        CryptoData cryptoData = CryptoData.WithSaltBuilder()
+                .plainText(plainPassword)
+                .salt(salt)
+                .build();
+        String encryptedPassword = encryptor.encrypt(cryptoData);
+        return EncryptedPassword.builder()
+                .salt(salt)
+                .password(encryptedPassword)
+                .build();
+    }
+
+    public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto){
 
         if (checkIsNameExist(dto.getName())){
             throw new IllegalArgumentException("There is already a user with that name");
         }
 
-        Optional<User> updateUser = userRepository.findByEmail(dto.getEmail());
+        Optional<User> updateUser = userRepository.findById(userId);
 
-        if(updateUser.isEmpty())
-            throw new IllegalArgumentException("There isn't a user with that email");
-
-        String salt = SaltGenerator.generateSalt();
-        CryptoData cryptoData = CryptoData.WithSaltBuilder()
-                .plainText(dto.getPassword())
-                .salt(salt)
-                .build();
-        String encryptedPassword = encryptor.encrypt(cryptoData);
+        EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
 
         updateUser.ifPresent(selectUser->{
             selectUser.setName(dto.getName());
-            selectUser.setPassword(encryptedPassword);
+            selectUser.setSalt(pw.getSalt());
+            selectUser.setPassword(pw.getPassword());
             selectUser.setPhone(dto.getPhone());
 
             userRepository.save(selectUser);

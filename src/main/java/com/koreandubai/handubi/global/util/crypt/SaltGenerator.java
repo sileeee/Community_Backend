@@ -1,4 +1,4 @@
-package com.koreandubai.handubi.global.util;
+package com.koreandubai.handubi.global.util.crypt;
 
 import java.util.Random;
 

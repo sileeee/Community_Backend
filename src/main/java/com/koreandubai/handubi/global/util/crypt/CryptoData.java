@@ -1,4 +1,4 @@
-package com.koreandubai.handubi.global.util;
+package com.koreandubai.handubi.global.util.crypt;
 
 import lombok.Builder;
 import lombok.Getter;
