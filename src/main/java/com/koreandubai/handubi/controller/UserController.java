@@ -6,6 +6,7 @@ import com.koreandubai.handubi.controller.dto.SignInRequestDto;
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.global.common.StatusEnum;
 import com.koreandubai.handubi.global.common.SuccessResponse;
+import com.koreandubai.handubi.global.util.auth.AuthRequired;
 import com.koreandubai.handubi.service.LoginService;
 import com.koreandubai.handubi.service.UserService;
 import jakarta.validation.Valid;
@@ -49,9 +50,11 @@ public class UserController {
         loginService.logout();
     }
 
-    @PutMapping("/update")
-    public SuccessResponse updateMember(@Valid @RequestBody UpdateUserInfoRequestDto requestDto){
-        userService.updateUserInfo(requestDto);
+    @AuthRequired
+    @PutMapping("/update/{id}")
+    public SuccessResponse updateMember(@PathVariable("id") final long id,
+                                        @Valid @RequestBody UpdateUserInfoRequestDto requestDto){
+        userService.updateUserInfo(id, requestDto);
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Successfully update user information")
