@@ -47,4 +47,15 @@ public class PostController {
                 .message("Successfully create posts")
                 .build();
     }
+
+    @DeleteMapping("/delete/{id}")
+    public SuccessResponse deletePost(@PathVariable("id") long postId, HttpServletRequest request) {
+
+        postService.deletePost(request, postId);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully delete posts")
+                .build();
+    }
 }
