@@ -1,6 +1,7 @@
 package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
+import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
 import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -80,5 +83,30 @@ public class PostService {
             throw new NoSuchElementException("Post with ID " + postId + " is not owned by user");
         }
         postRepository.deleteById(postId);
+    }
+
+    public void editPost(HttpServletRequest request, long postId, EditPostRequestDto dto) {
+
+        HttpSession session = request.getSession();
+        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+
+        if(postRepository.getPostsById(postId).isEmpty()){
+            throw new NoSuchElementException("Post with ID " + postId + " not found");
+        }
+
+        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+            throw new NoSuchElementException("Post with ID " + postId + " is not owned by user");
+        }
+
+        Optional<Post> updatePost = postRepository.getPostsById(postId);
+
+        updatePost.ifPresent(selectPost-> {
+            selectPost.setTitle(dto.getTitle());
+            selectPost.setBody(dto.getBody());
+            selectPost.setStatus(dto.getStatus());
+            selectPost.setLastModified(LocalDateTime.now());
+
+            postRepository.save(selectPost);
+        });
     }
 }

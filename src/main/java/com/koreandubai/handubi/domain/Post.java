@@ -5,10 +5,13 @@ import com.koreandubai.handubi.global.common.PostStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "posts")
 public class Post {
 
@@ -36,6 +39,9 @@ public class Post {
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+
+    @Column(name = "last_modified", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime lastModified;
 
     @Builder
     public Post(Long id, CategoryType category, String title, String body, Long userId, PostStatus status, Long view) {
