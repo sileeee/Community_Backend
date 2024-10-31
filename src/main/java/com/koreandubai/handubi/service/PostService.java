@@ -66,4 +66,19 @@ public class PostService {
 
         postRepository.save(post);
     }
+
+    public void deletePost(HttpServletRequest request, Long postId) {
+
+        HttpSession session = request.getSession();
+        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+
+        if(postRepository.getPostsById(postId).isEmpty()){
+            throw new NoSuchElementException("Post with ID " + postId + " not found");
+        }
+
+        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+            throw new NoSuchElementException("Post with ID " + postId + " is not owned by user");
+        }
+        postRepository.deleteById(postId);
+    }
 }
