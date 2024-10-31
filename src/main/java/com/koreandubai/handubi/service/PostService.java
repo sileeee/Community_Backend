@@ -10,6 +10,7 @@ import com.koreandubai.handubi.global.common.SessionKey;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.repository.PostRepository;
 import com.koreandubai.handubi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.koreandubai.handubi.global.common.PageSize.NOMAL_PAGE_SIZE;
@@ -45,7 +44,7 @@ public class PostService {
         for (Post post : posts) {
             Optional<User> user = userRepository.findById(post.getUserId());
             if(user.isEmpty()) {
-                throw new NoSuchElementException("User with ID " + post.getUserId() + " not found");
+                throw new EntityNotFoundException("User with ID " + post.getUserId() + " not found");
             }
             userNames.add(user.get().getName());
         }
@@ -76,11 +75,11 @@ public class PostService {
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
         if(postRepository.getPostsById(postId).isEmpty()){
-            throw new NoSuchElementException("Post with ID " + postId + " not found");
+            throw new EntityNotFoundException("Post with ID " + postId + " not found");
         }
 
         if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
-            throw new NoSuchElementException("Post with ID " + postId + " is not owned by user");
+            throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
         postRepository.deleteById(postId);
     }
@@ -91,11 +90,11 @@ public class PostService {
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
         if(postRepository.getPostsById(postId).isEmpty()){
-            throw new NoSuchElementException("Post with ID " + postId + " not found");
+            throw new EntityNotFoundException("Post with ID " + postId + " not found");
         }
 
         if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
-            throw new NoSuchElementException("Post with ID " + postId + " is not owned by user");
+            throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
 
         Optional<Post> updatePost = postRepository.getPostsById(postId);

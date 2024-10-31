@@ -2,6 +2,7 @@ package com.koreandubai.handubi.global.exception;
 
 import com.koreandubai.handubi.global.common.FailResponse;
 import com.koreandubai.handubi.global.common.StatusEnum;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,16 @@ public class GlobalExceptionHandler {
 
         return FailResponse.builder()
                 .status(StatusEnum.UNAUTHORIZED)
+                .errorMessage(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public FailResponse handleEntityNotFoundException(EntityNotFoundException e){
+
+        return FailResponse.builder()
+                .status(StatusEnum.NOT_FOUND)
                 .errorMessage(e.getMessage())
                 .build();
     }
