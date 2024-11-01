@@ -9,14 +9,13 @@ import lombok.Getter;
 
 
 @Getter
-public class CreatePostRequestDto {
+public class EditPostRequestDto {
 
     @NotBlank(message = "You should enter a title.")
-    @Size(max = 50, min = 5)
+    @Size(max = 50)
     private final String title;
 
     @NotBlank(message = "You should enter a content.")
-    @Size(min = 20)
     private final String body;
 
     @NotNull(message = "You should choose status of post.")
@@ -24,7 +23,7 @@ public class CreatePostRequestDto {
 
 
     @Builder
-    public CreatePostRequestDto(String title, String body, PostStatus status) {
+    public EditPostRequestDto(String title, String body, PostStatus status) {
         this.title = title;
         this.body = body;
         this.status = status;

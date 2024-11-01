@@ -1,6 +1,8 @@
 package com.koreandubai.handubi.controller;
 
 import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
+import com.koreandubai.handubi.controller.dto.DetailedPost;
+import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
 import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.StatusEnum;
@@ -35,9 +37,21 @@ public class PostController {
                 .build();
     }
 
-    @PostMapping
+    @GetMapping("/{id}")
+    public SuccessResponse getSinglePost(@PathVariable("id") long postId) {
+
+        DetailedPost post = postService.getSinglePost(postId);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully get a single post")
+                .data(post)
+                .build();
+    }
+
+    @PostMapping("/new/{category}")
     public SuccessResponse createPost(HttpServletRequest request,
-                                      @RequestParam(required = false, value = "category")CategoryType categoryType,
+                                      @PathVariable(value = "category")CategoryType categoryType,
                                       @Valid @RequestBody CreatePostRequestDto requestDto) {
 
         postService.createPost(request, categoryType, requestDto);
@@ -56,6 +70,19 @@ public class PostController {
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Successfully delete posts")
+                .build();
+    }
+
+    @PutMapping("/edit/{id}")
+    public SuccessResponse editPost(HttpServletRequest request,
+                                    @PathVariable("id") long postId,
+                                    @Valid @RequestBody EditPostRequestDto requestDto) {
+
+        postService.editPost(request, postId, requestDto);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully edit posts")
                 .build();
     }
 }
