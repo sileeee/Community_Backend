@@ -23,11 +23,13 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws UnauthorizedException {
         try {
-            if (isNeedToAuth((HandlerMethod) handler)) {
-                String userIdBySession = getUserIdBySession(request);
-                String userIdByPath = getUserIdByPathVariable(request);
-                if (!userIdBySession.equals(userIdByPath)) {
-                    throw new UnauthorizedException();
+            if (handler instanceof HandlerMethod handlerMethod) {
+                if (isNeedToAuth(handlerMethod)) {
+                    String userIdBySession = getUserIdBySession(request);
+                    String userIdByPath = getUserIdByPathVariable(request);
+                    if (!userIdBySession.equals(userIdByPath)) {
+                        throw new UnauthorizedException();
+                    }
                 }
             }
             return true;

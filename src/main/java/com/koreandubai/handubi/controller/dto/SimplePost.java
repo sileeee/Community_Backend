@@ -20,24 +20,24 @@ public class SimplePost {
     private String title;
 
     @NotNull
-    private String userName;
+    private String author;
 
     @NotNull
     private LocalDateTime createdAt;
 
     @Builder
-    public SimplePost(long id, String title, String userName, LocalDateTime createdAt) {
+    public SimplePost(long id, String title, String author, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
-        this.userName = userName;
+        this.author = author;
         this.createdAt = createdAt;
     }
 
-    public static SimplePost toResponse(Post post, String userName) {
+    public static SimplePost toResponse(Post post, String author) {
         return SimplePost.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .userName(userName)
+                .author(author)
                 .createdAt(post.getCreatedAt())
                 .build();
     }
