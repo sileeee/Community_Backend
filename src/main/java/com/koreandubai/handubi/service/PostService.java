@@ -68,6 +68,7 @@ public class PostService {
                 .userId(userId)
                 .view(0L)
                 .status(dto.getStatus())
+                .lastModified(LocalDateTime.now())
                 .build();
 
         postRepository.save(post);
