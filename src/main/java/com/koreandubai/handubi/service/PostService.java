@@ -113,12 +113,29 @@ public class PostService {
         });
     }
 
-    public void IncreaseViewCount(Long userId, Long postId) {
+    public void IncreaseViewCount(Long postId){
+
+        Optional<Post> updatePost = postRepository.getPostsById(postId);
+
+        updatePost.ifPresent(selectPost -> {
+            selectPost.setView(selectPost.getView() + 1);
+            postRepository.save(selectPost);
+        });
+    }
+
+    public static long calculateTimeUntilMidnight() {
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime midnight = now.truncatedTo(ChronoUnit.DAYS).plusDays(1);
+        return ChronoUnit.SECONDS.between(now, midnight);
+    }
+
+    public void PreventDuplicatedView(Long userId, Long postId) {
 
         String viewCount = redisUtil.getData(String.valueOf(userId));
         if (viewCount == null) {
             redisUtil.setDateExpire(String.valueOf(userId), postId + "_", calculateTimeUntilMidnight());
-//            post.increaseView();
+            IncreaseViewCount(postId);
         } else {
             String[] strArray = viewCount.split("_");
             List<String> redisPostList = Arrays.asList(strArray);
@@ -136,17 +153,10 @@ public class PostService {
                     viewCount += postId + "_";
 
                     redisUtil.setDateExpire(String.valueOf(userId), viewCount, calculateTimeUntilMidnight());
-//                    post.updateView();
+                    IncreaseViewCount(postId);
                 }
             }
         }
-    }
-
-    public static long calculateTimeUntilMidnight() {
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime midnight = now.truncatedTo(ChronoUnit.DAYS).plusDays(1);
-        return ChronoUnit.SECONDS.between(now, midnight);
     }
 
     public DetailedPost getSinglePost(long postId) {
@@ -160,6 +170,8 @@ public class PostService {
         if(user.isEmpty()){
             throw new EntityNotFoundException("User with ID " + postId + " not found");
         }
+
+        PreventDuplicatedView(user.get().getId(), postId);
 
         return DetailedPost.builder()
                 .title(post.get().getTitle())
