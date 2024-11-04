@@ -63,6 +63,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto){
 
         if (checkIsNameExist(dto.getName())){

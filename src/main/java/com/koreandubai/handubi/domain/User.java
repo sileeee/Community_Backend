@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-@Table(name = "users")
 public class User {
 
     @Id
@@ -32,6 +31,7 @@ public class User {
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "user_type")
     private UserType userType;
 
     @Builder

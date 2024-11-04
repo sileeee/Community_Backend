@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class PostService {
         return SimplePost.toList(posts, userNames);
     }
 
+    @Transactional
     public void createPost(HttpServletRequest request, CategoryType category, CreatePostRequestDto dto) {
 
         HttpSession session = request.getSession();
@@ -74,6 +76,7 @@ public class PostService {
         postRepository.save(post);
     }
 
+    @Transactional
     public void deletePost(HttpServletRequest request, Long postId) {
 
         HttpSession session = request.getSession();
@@ -89,6 +92,7 @@ public class PostService {
         postRepository.deleteById(postId);
     }
 
+    @Transactional
     public void editPost(HttpServletRequest request, long postId, EditPostRequestDto dto) {
 
         HttpSession session = request.getSession();

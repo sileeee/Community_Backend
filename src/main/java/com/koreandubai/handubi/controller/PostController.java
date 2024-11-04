@@ -24,7 +24,7 @@ public class PostController {
 
 
     @GetMapping
-    public SuccessResponse getPosts(@RequestParam(required = false, value = "category")CategoryType categoryType,
+    public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category")CategoryType categoryType,
                                     @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                     @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
 
@@ -38,7 +38,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public SuccessResponse getSinglePost(@PathVariable("id") long postId) {
+    public SuccessResponse getPost(@PathVariable("id") long postId) {
 
         DetailedPost post = postService.getSinglePost(postId);
 
