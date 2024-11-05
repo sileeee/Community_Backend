@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
+    private final UserService userService;
 
     public List<SimplePost> getPosts(CategoryType category, int pageNo, String criteria){
 
@@ -56,10 +58,10 @@ public class PostService {
         return SimplePost.toList(posts, userNames);
     }
 
+    @Transactional
     public void createPost(HttpServletRequest request, CategoryType category, CreatePostRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Post post = Post.builder()
                 .category(category)
@@ -74,35 +76,31 @@ public class PostService {
         postRepository.save(post);
     }
 
+    @Transactional
     public void deletePost(HttpServletRequest request, Long postId) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
-        if(postRepository.getPostsById(postId).isEmpty()){
-            throw new EntityNotFoundException("Post with ID " + postId + " not found");
-        }
+        Optional<Post> deletePost = Optional.ofNullable(postRepository.getPostsById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
 
-        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+        if(!userId.equals(deletePost.get().getUserId())){
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
         postRepository.deleteById(postId);
     }
 
+    @Transactional
     public void editPost(HttpServletRequest request, long postId, EditPostRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
-        if(postRepository.getPostsById(postId).isEmpty()){
-            throw new EntityNotFoundException("Post with ID " + postId + " not found");
-        }
+        Optional<Post> updatePost = Optional.ofNullable(postRepository.getPostsById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
 
-        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+        if(!userId.equals(updatePost.get().getUserId())){
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
-
-        Optional<Post> updatePost = postRepository.getPostsById(postId);
 
         updatePost.ifPresent(selectPost-> {
             selectPost.setTitle(dto.getTitle());

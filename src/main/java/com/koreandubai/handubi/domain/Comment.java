@@ -1,29 +1,23 @@
 package com.koreandubai.handubi.domain;
 
-import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.PostStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
 @Setter
-public class Post {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CategoryType category;
-
-    @Column(nullable = false)
-    private String title;
+    @Column(nullable = false, name = "post_id")
+    private Long postId;
 
     @Column(nullable = false)
     private String body;
@@ -31,11 +25,8 @@ public class Post {
     @Column(nullable = false, name = "user_id")
     private Long userId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PostStatus status;
-
-    private Long view;
+    @Column(name = "pre_comment_id")
+    private Long preCommentId;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -43,20 +34,22 @@ public class Post {
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
     @Builder
-    public Post(Long id, CategoryType category, String title, String body, Long userId, PostStatus status, Long view, LocalDateTime lastModified) {
+    public Comment(Long id, Long postId, String body, Long userId, Long preCommentId, LocalDateTime lastModified, boolean isDeleted) {
         this.id = id;
-        this.category = category;
-        this.title = title;
+        this.postId = postId;
         this.body = body;
         this.userId = userId;
-        this.status = status;
-        this.view = view;
+        this.preCommentId = preCommentId;
         this.createdAt = LocalDateTime.now();
         this.lastModified = lastModified;
+        this.isDeleted = isDeleted;
     }
 
-    public Post() {
+    public Comment() {
 
     }
 }
