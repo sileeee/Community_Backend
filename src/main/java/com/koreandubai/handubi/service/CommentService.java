@@ -12,6 +12,7 @@ import com.koreandubai.handubi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,7 +38,8 @@ public class CommentService {
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
-        List<Comment> comments = commentRepository.findAllByPostId(postId, pageable).getContent();
+        Page<Comment> commentsPage = commentRepository.findAllByPostIdAndIsDeletedFalse(postId, pageable);
+        List<Comment> comments = commentsPage.getContent();
 
         List<String> userNames = new ArrayList<>();
         for (Comment comment : comments) {
@@ -74,14 +76,15 @@ public class CommentService {
         HttpSession session = request.getSession();
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
-        if(commentRepository.getCommentById(commentId).isEmpty()){
-            throw new EntityNotFoundException("Comment with ID " + commentId + " not found");
-        }
-
-        Optional<Comment> updateComment = commentRepository.getCommentById(commentId);
+        Optional<Comment> updateComment = Optional.ofNullable(commentRepository.getCommentById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment with ID " + commentId + " not found")));
 
         if(!userId.equals(updateComment.get().getUserId())){
             throw new UnauthorizedException("Comment with ID " + commentId + " is not owned by user");
+        }
+
+        if(updateComment.get().isDeleted()){
+            throw new EntityNotFoundException("The comment has been deleted and no longer exists.");
         }
 
         updateComment.ifPresent(selectComment-> {
@@ -98,16 +101,16 @@ public class CommentService {
         HttpSession session = request.getSession();
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
-        if(commentRepository.getCommentById(commentId).isEmpty()){
-            throw new EntityNotFoundException("Comment with ID " + commentId + " not found");
-        }
-
-        Optional<Comment> deleteComment = commentRepository.getCommentById(commentId);
+        Optional<Comment> deleteComment = Optional.ofNullable(commentRepository.getCommentById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment with ID " + commentId + " not found")));
 
         if(!userId.equals(deleteComment.get().getUserId())){
             throw new UnauthorizedException("Comment with ID " + commentId + " is not owned by user");
         }
 
+        if(deleteComment.get().isDeleted()){
+            throw new EntityNotFoundException("The comment has been deleted and no longer exists.");
+        }
 
         deleteComment.ifPresent(selectComment-> {
             selectComment.setDeleted(true);

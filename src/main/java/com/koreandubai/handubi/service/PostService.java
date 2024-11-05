@@ -82,11 +82,10 @@ public class PostService {
         HttpSession session = request.getSession();
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
-        if(postRepository.getPostsById(postId).isEmpty()){
-            throw new EntityNotFoundException("Post with ID " + postId + " not found");
-        }
+        Optional<Post> deletePost = Optional.ofNullable(postRepository.getPostsById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
 
-        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+        if(!userId.equals(deletePost.get().getUserId())){
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
         postRepository.deleteById(postId);
@@ -98,15 +97,12 @@ public class PostService {
         HttpSession session = request.getSession();
         Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
 
-        if(postRepository.getPostsById(postId).isEmpty()){
-            throw new EntityNotFoundException("Post with ID " + postId + " not found");
-        }
+        Optional<Post> updatePost = Optional.ofNullable(postRepository.getPostsById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
 
-        if(!userId.equals(postRepository.getPostsById(postId).get().getUserId())){
+        if(!userId.equals(updatePost.get().getUserId())){
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
-
-        Optional<Post> updatePost = postRepository.getPostsById(postId);
 
         updatePost.ifPresent(selectPost-> {
             selectPost.setTitle(dto.getTitle());
