@@ -18,7 +18,6 @@ public class CommentRequestDto {
     @Size(max = 50, min = 1)
     private String content;
 
-    @NotBlank
     private Long preCommentId;
 
     @Builder

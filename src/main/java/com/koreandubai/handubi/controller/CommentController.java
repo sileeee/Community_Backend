@@ -16,16 +16,18 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
 
-    @GetMapping("/{id}")
+    @GetMapping
     public SuccessResponse getAllComments(@RequestParam(required = false, value = "post_id") Long postId,
-                                          @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo) {
-        List<SimpleComment> comments = commentService.getAllComments(postId, pageNo);
+                                          @RequestParam(required = false, defaultValue = "0", value = "page") int page,
+                                          @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+
+        List<SimpleComment> comments = commentService.getAllComments(postId, page, criteria);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)

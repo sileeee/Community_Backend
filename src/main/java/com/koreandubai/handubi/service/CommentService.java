@@ -33,9 +33,9 @@ public class CommentService {
     private final UserRepository userRepository;
 
 
-    public List<SimpleComment> getAllComments(Long postId, int pageNo) {
+    public List<SimpleComment> getAllComments(Long postId, int pageNo, String criteria) {
 
-        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC));
+        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
         List<Comment> comments = commentRepository.findAllByPostId(postId, pageable).getContent();
 
@@ -102,10 +102,18 @@ public class CommentService {
             throw new EntityNotFoundException("Comment with ID " + commentId + " not found");
         }
 
-        if(!userId.equals(commentRepository.getCommentById(commentId).get().getUserId())){
+        Optional<Comment> deleteComment = commentRepository.getCommentById(commentId);
+
+        if(!userId.equals(deleteComment.get().getUserId())){
             throw new UnauthorizedException("Comment with ID " + commentId + " is not owned by user");
         }
-        commentRepository.deleteById(commentId);
+
+
+        deleteComment.ifPresent(selectComment-> {
+            selectComment.setDeleted(true);
+
+            commentRepository.save(selectComment);
+        });
     }
 }
 

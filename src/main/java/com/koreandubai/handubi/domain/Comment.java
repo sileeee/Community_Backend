@@ -38,13 +38,13 @@ public class Comment {
     private boolean isDeleted;
 
     @Builder
-    public Comment(Long id, Long postId, String body, Long userId, Long preCommentId, LocalDateTime createdAt, LocalDateTime lastModified, boolean isDeleted) {
+    public Comment(Long id, Long postId, String body, Long userId, Long preCommentId, LocalDateTime lastModified, boolean isDeleted) {
         this.id = id;
         this.postId = postId;
         this.body = body;
         this.userId = userId;
         this.preCommentId = preCommentId;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
         this.lastModified = lastModified;
         this.isDeleted = isDeleted;
     }
