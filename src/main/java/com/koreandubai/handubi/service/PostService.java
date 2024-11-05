@@ -7,14 +7,13 @@ import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.SessionKey;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
 import com.koreandubai.handubi.repository.PostRepository;
 import com.koreandubai.handubi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -179,5 +178,24 @@ public class PostService {
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimplePost> searchPostsByKeyword(@NotBlank String keyword, int pageNo, String criteria) {
+
+        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+
+        List<Post> posts =  postRepository.searchByKeyword(keyword, pageable).getContent();
+
+        List<String> userNames = new ArrayList<>();
+        for (Post post : posts) {
+            Optional<User> user = userRepository.findById(post.getUserId());
+            if(user.isEmpty()) {
+                throw new EntityNotFoundException("User with ID " + post.getUserId() + " not found");
+            }
+            userNames.add(user.get().getName());
+        }
+
+        return SimplePost.toList(posts, userNames);
     }
 }
