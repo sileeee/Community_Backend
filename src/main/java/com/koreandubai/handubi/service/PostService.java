@@ -38,6 +38,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
+    private final UserService userService;
 
     public List<SimplePost> getPosts(CategoryType category, int pageNo, String criteria){
 
@@ -60,8 +61,7 @@ public class PostService {
     @Transactional
     public void createPost(HttpServletRequest request, CategoryType category, CreatePostRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Post post = Post.builder()
                 .category(category)
@@ -79,8 +79,7 @@ public class PostService {
     @Transactional
     public void deletePost(HttpServletRequest request, Long postId) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Optional<Post> deletePost = Optional.ofNullable(postRepository.getPostsById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
@@ -94,8 +93,7 @@ public class PostService {
     @Transactional
     public void editPost(HttpServletRequest request, long postId, EditPostRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Optional<Post> updatePost = Optional.ofNullable(postRepository.getPostsById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));

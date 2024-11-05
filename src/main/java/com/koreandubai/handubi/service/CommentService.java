@@ -32,7 +32,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-
+    private final UserService userService;
 
     public List<SimpleComment> getAllComments(Long postId, int pageNo, String criteria) {
 
@@ -55,8 +55,7 @@ public class CommentService {
     @Transactional
     public void createComment(HttpServletRequest request, CommentRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Comment comment = Comment.builder()
                 .postId(dto.getPostId())
@@ -73,8 +72,7 @@ public class CommentService {
     @Transactional
     public void updateComment(HttpServletRequest request, Long commentId, EditCommentRequestDto dto) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Optional<Comment> updateComment = Optional.ofNullable(commentRepository.getCommentById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment with ID " + commentId + " not found")));
@@ -98,8 +96,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(HttpServletRequest request, Long commentId) {
 
-        HttpSession session = request.getSession();
-        Long userId = (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID)).orElseThrow(UnauthorizedException::new);
+        Long userId = userService.getUserIdFromSession(request);
 
         Optional<Comment> deleteComment = Optional.ofNullable(commentRepository.getCommentById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment with ID " + commentId + " not found")));

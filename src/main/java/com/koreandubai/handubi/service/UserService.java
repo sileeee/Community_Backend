@@ -4,10 +4,14 @@ import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
 import com.koreandubai.handubi.domain.EncryptedPassword;
 import com.koreandubai.handubi.domain.User;
+import com.koreandubai.handubi.global.common.SessionKey;
+import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.repository.UserRepository;
 import com.koreandubai.handubi.global.util.crypt.CryptoData;
 import com.koreandubai.handubi.global.util.crypt.Encryptor;
 import com.koreandubai.handubi.global.util.crypt.SaltGenerator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -82,5 +86,11 @@ public class UserService {
 
             userRepository.save(selectUser);
         });
+    }
+
+    public Long getUserIdFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        return (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID))
+                .orElseThrow(UnauthorizedException::new);
     }
 }
