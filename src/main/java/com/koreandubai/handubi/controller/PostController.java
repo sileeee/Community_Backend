@@ -10,6 +10,7 @@ import com.koreandubai.handubi.global.common.SuccessResponse;
 import com.koreandubai.handubi.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,6 +84,19 @@ public class PostController {
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Successfully edit posts")
+                .build();
+    }
+
+    @GetMapping("/search")
+    public SuccessResponse searchPostsByKeyword (@NotBlank @RequestParam String keyword,
+                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                                 @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+        List<SimplePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully search posts")
+                .data(posts)
                 .build();
     }
 }

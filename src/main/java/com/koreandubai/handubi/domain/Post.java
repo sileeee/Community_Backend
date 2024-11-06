@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Table(indexes = {
+        @Index(name = "idx_title", columnList = "title"),
+        @Index(name = "idx_body", columnList = "body")
+})
 public class Post {
 
     @Id
