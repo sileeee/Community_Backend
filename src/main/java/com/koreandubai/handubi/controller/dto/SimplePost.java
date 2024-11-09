@@ -1,6 +1,7 @@
 package com.koreandubai.handubi.controller.dto;
 
 import com.koreandubai.handubi.domain.Post;
+import com.koreandubai.handubi.global.common.SubCategoryType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,13 +24,17 @@ public class SimplePost {
     private String author;
 
     @NotNull
+    SubCategoryType subCategory;
+
+    @NotNull
     private LocalDateTime createdAt;
 
     @Builder
-    public SimplePost(long id, String title, String author, LocalDateTime createdAt) {
+    public SimplePost(long id, String title, String author, SubCategoryType subCategory, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.author = author;
+        this.subCategory = subCategory;
         this.createdAt = createdAt;
     }
 
@@ -38,6 +43,7 @@ public class SimplePost {
                 .id(post.getId())
                 .title(post.getTitle())
                 .author(author)
+                .subCategory(post.getSubCategory())
                 .createdAt(post.getCreatedAt())
                 .build();
     }
