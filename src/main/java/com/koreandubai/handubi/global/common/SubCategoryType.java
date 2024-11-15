@@ -11,7 +11,7 @@ public enum SubCategoryType {
     SOCIETY,
     ECONOMICS,
     SPORTS,
-    ENTERTAINMENT,
+    CULTURE,
 
     // JobSearch
     FULL_TIME,
@@ -24,29 +24,59 @@ public enum SubCategoryType {
     RENT,
 
     // Second Hand
-
+    ELECTRONIC,
+    FURNITURE,
+    HOUSEHOLD,
+    TICKET,
+    USED_CAR,
+    DIRHAM,
 
     // Market
     KOREAN,
     ASIAN,
+    GROUP,
 
     // Travel
-    DUBAI,
-    ABU_DHABI,
+    EXPERIENCE,
+    ACCOMODATION,
+    RENT_CAR,
+    EVENT,
 
-    // Education
+
+    // child care
     CHILDBIRTH,
     EDUCATION,
-    PARENTING;
+    PARENTING,
+    ACADEMIY,
 
     // Life
-
+    HOSPITAL,
+    BEAUTY,
+    VISA,
+    RESTAURANT,
+    DELIVER,
+    CAR,
+    COMPANY,
 
     // Club
+    SPORT,
+    HOBBY,
+    RELIGION,
+    STUDY,
 
 
     // Free Board
 
-
     // Korean Company
+    KOREAN_HOSPITAL,
+    KOREAN_BEAUTY,
+    KOREAN_ACCOMODATION,
+    KOREAN_RESTAURANT,
+    KOREAN_MARKET,
+    KOREAN_HEALTH,
+    KOREAN_LAW,
+    KOREAN_CAR,
+    KOREAN_ACADEMY,
+    KOREAN_ESTATE,
+    KOREAN_TRAVEL;
 }

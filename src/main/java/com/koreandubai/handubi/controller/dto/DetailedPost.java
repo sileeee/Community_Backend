@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 public class DetailedPost {
 
+    private Long id;
+
     private String title;
 
     private String body;
@@ -24,7 +26,8 @@ public class DetailedPost {
 
 
     @Builder
-    public DetailedPost(String title, String body, String author, SubCategoryType subCategory, long view, LocalDateTime createdAt) {
+    public DetailedPost(Long id, String title, String body, String author, SubCategoryType subCategory, long view, LocalDateTime createdAt) {
+        this.id = id;
         this.title = title;
         this.body = body;
         this.author = author;

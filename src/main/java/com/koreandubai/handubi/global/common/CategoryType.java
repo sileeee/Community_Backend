@@ -4,6 +4,8 @@ public enum CategoryType {
 
     JOB_SEARCH,
     NEWS,
+    LIFE,
+    SECOND_HAND,
     REAL_ESTATE,
     ASIAN_MARKET,
     TRAVEL,
