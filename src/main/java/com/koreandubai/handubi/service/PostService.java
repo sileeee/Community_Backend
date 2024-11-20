@@ -7,6 +7,7 @@ import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
+import com.koreandubai.handubi.global.common.SubCategoryType;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
 import com.koreandubai.handubi.repository.PostRepository;
@@ -39,11 +40,16 @@ public class PostService {
     private final RedisUtil redisUtil;
     private final UserService userService;
 
-    public List<SimplePost> getPosts(CategoryType category, int pageNo, String criteria){
+    public List<SimplePost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria){
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
-        List<Post> posts = postRepository.findAllByCategory(category, pageable).getContent();
+        List<Post> posts;
+        if(subCategory.equals(SubCategoryType.TOTAL)){
+            posts = postRepository.findAllByCategory(category,pageable).getContent();
+        }else {
+            posts = postRepository.findAllByCategoryAndSubCategory(category, subCategory, pageable).getContent();
+        }
 
         List<String> userNames = new ArrayList<>();
         for (Post post : posts) {
@@ -66,6 +72,7 @@ public class PostService {
                 .category(category)
                 .title(dto.getTitle())
                 .body(dto.getBody())
+                .subCategory(dto.getSubCategory())
                 .userId(userId)
                 .view(0L)
                 .status(dto.getStatus())
@@ -104,6 +111,7 @@ public class PostService {
         updatePost.ifPresent(selectPost-> {
             selectPost.setTitle(dto.getTitle());
             selectPost.setBody(dto.getBody());
+            selectPost.setSubCategory(dto.getSubCategory());
             selectPost.setStatus(dto.getStatus());
             selectPost.setLastModified(LocalDateTime.now());
 
@@ -172,9 +180,11 @@ public class PostService {
         PreventDuplicatedView(user.get().getId(), postId);
 
         return DetailedPost.builder()
+                .id(postId)
                 .title(post.get().getTitle())
                 .body(post.get().getBody())
                 .author(user.get().getName())
+                .subCategory(post.get().getSubCategory())
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())
                 .build();

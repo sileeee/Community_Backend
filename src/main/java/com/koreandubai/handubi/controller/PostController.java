@@ -6,6 +6,7 @@ import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
 import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.StatusEnum;
+import com.koreandubai.handubi.global.common.SubCategoryType;
 import com.koreandubai.handubi.global.common.SuccessResponse;
 import com.koreandubai.handubi.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,11 +26,12 @@ public class PostController {
 
 
     @GetMapping
-    public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category")CategoryType categoryType,
-                                    @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                    @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+    public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category") CategoryType categoryType,
+                                       @RequestParam(required = false, value = "subCategory", defaultValue = "TOTAL") SubCategoryType subCategory,
+                                       @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
 
-        List<SimplePost> products = postService.getPosts(categoryType, pageNo, criteria);
+        List<SimplePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
@@ -52,7 +54,7 @@ public class PostController {
 
     @PostMapping("/new/{category}")
     public SuccessResponse createPost(HttpServletRequest request,
-                                      @PathVariable(value = "category")CategoryType categoryType,
+                                      @PathVariable(value = "category") CategoryType categoryType,
                                       @Valid @RequestBody CreatePostRequestDto requestDto) {
 
         postService.createPost(request, categoryType, requestDto);
@@ -88,9 +90,9 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public SuccessResponse searchPostsByKeyword (@NotBlank @RequestParam String keyword,
-                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                                 @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+    public SuccessResponse searchPostsByKeyword(@NotBlank @RequestParam String keyword,
+                                                @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                                @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
         List<SimplePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
 
         return SuccessResponse.builder()

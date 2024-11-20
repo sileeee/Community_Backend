@@ -2,6 +2,7 @@ package com.koreandubai.handubi.repository;
 
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.global.common.CategoryType;
+import com.koreandubai.handubi.global.common.SubCategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,10 +15,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByCategory(CategoryType categoryType, Pageable pageable);
 
+    Page<Post> findAllByCategoryAndSubCategory(CategoryType categoryType, SubCategoryType subCategory, Pageable pageable);
+
     Optional<Post> getPostsById(Long postId);
 
-    @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(p.body) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "ORDER BY p.createdAt DESC")
+    @Query(value = "SELECT * FROM post WHERE LOWER(title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR (body IS NOT NULL AND LOWER(body) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "ORDER BY created_at DESC",
+            nativeQuery = true)
     Page<Post> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }
