@@ -180,6 +180,7 @@ public class PostService {
         PreventDuplicatedView(user.get().getId(), postId);
 
         return DetailedPost.builder()
+                .id(postId)
                 .title(post.get().getTitle())
                 .body(post.get().getBody())
                 .author(user.get().getName())
