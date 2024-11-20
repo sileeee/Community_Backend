@@ -26,10 +26,10 @@ public class PostController {
 
 
     @GetMapping
-    public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category")CategoryType categoryType,
+    public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category") CategoryType categoryType,
                                        @RequestParam(required = false, value = "subCategory", defaultValue = "TOTAL") SubCategoryType subCategory,
-                                        @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                        @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+                                       @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
 
         List<SimplePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
 
@@ -54,7 +54,7 @@ public class PostController {
 
     @PostMapping("/new/{category}")
     public SuccessResponse createPost(HttpServletRequest request,
-                                      @PathVariable(value = "category")CategoryType categoryType,
+                                      @PathVariable(value = "category") CategoryType categoryType,
                                       @Valid @RequestBody CreatePostRequestDto requestDto) {
 
         postService.createPost(request, categoryType, requestDto);
@@ -90,9 +90,9 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public SuccessResponse searchPostsByKeyword (@NotBlank @RequestParam String keyword,
-                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                                 @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+    public SuccessResponse searchPostsByKeyword(@NotBlank @RequestParam String keyword,
+                                                @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                                @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
         List<SimplePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
 
         return SuccessResponse.builder()
