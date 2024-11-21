@@ -34,9 +34,9 @@ public class CommentService {
 
     public List<SimpleComment> getAllComments(Long postId, int pageNo, String criteria) {
 
-        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.ASC, criteria));
 
-        Page<Comment> commentsPage = commentRepository.findAllByPostIdAndIsDeletedFalse(postId, pageable);
+        Page<Comment> commentsPage = commentRepository.findAllByPostId(postId, pageable);
         List<Comment> comments = commentsPage.getContent();
 
         List<String> userNames = new ArrayList<>();

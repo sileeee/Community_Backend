@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 @Getter
@@ -22,15 +23,22 @@ public class SimpleComment {
     @NotNull
     private String author;
 
+    private long preCommentId;
+
     @NotNull
     private LocalDateTime createdAt;
 
+    @NotNull
+    private boolean isDeleted;
+
     @Builder
-    public SimpleComment(long id, String content, String author, LocalDateTime createdAt) {
+    public SimpleComment(long id, String content, String author, long preCommentId, LocalDateTime createdAt, boolean isDeleted) {
         this.id = id;
         this.content = content;
         this.author = author;
+        this.preCommentId = preCommentId;
         this.createdAt = createdAt;
+        this.isDeleted = isDeleted;
     }
 
     public static SimpleComment toResponse(Comment comment, String author) {
@@ -39,6 +47,8 @@ public class SimpleComment {
                 .content(comment.getBody())
                 .author(author)
                 .createdAt(comment.getCreatedAt())
+                .preCommentId(Optional.ofNullable(comment.getPreCommentId()).orElseGet(() -> 0L))
+                .isDeleted(comment.isDeleted())
                 .build();
     }
 
