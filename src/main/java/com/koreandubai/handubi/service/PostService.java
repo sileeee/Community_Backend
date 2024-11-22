@@ -184,6 +184,7 @@ public class PostService {
                 .title(post.get().getTitle())
                 .body(post.get().getBody())
                 .author(user.get().getName())
+                .category(post.get().getCategory())
                 .subCategory(post.get().getSubCategory())
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())

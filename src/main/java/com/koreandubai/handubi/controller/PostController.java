@@ -92,7 +92,7 @@ public class PostController {
     @GetMapping("/search")
     public SuccessResponse searchPostsByKeyword(@NotBlank @RequestParam String keyword,
                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                                @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+                                                @RequestParam(required = false, defaultValue = "created_at", value = "criteria") String criteria) {
         List<SimplePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
 
         return SuccessResponse.builder()
