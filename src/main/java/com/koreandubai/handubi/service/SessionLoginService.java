@@ -1,11 +1,14 @@
 package com.koreandubai.handubi.service;
 
+import com.koreandubai.handubi.controller.dto.AuthInfo;
 import com.koreandubai.handubi.controller.dto.SignInRequestDto;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.SessionKey;
+import com.koreandubai.handubi.global.common.UserType;
 import com.koreandubai.handubi.global.util.crypt.CryptoData;
 import com.koreandubai.handubi.global.util.crypt.Encryptor;
 import com.koreandubai.handubi.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,5 +47,26 @@ public class SessionLoginService implements LoginService{
     public void logout(){
 
         httpSession.removeAttribute(SessionKey.LOGIN_USER_ID);
+    }
+
+    @Override
+    public AuthInfo isLoggedIn(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+
+        Long userId = (Long) session.getAttribute(SessionKey.LOGIN_USER_ID);
+
+        boolean isLoggedIn = false;
+        UserType role = null;
+
+        if(userId != null){
+            role = userRepository.findById(userId).get().getUserType();
+            isLoggedIn = true;
+        }
+
+        return AuthInfo.builder()
+                .role(role)
+                .isLoggedIn(isLoggedIn)
+                .build();
     }
 }
