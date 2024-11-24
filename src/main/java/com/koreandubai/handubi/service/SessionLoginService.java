@@ -56,15 +56,20 @@ public class SessionLoginService implements LoginService{
 
         Long userId = (Long) session.getAttribute(SessionKey.LOGIN_USER_ID);
 
+        String name = "";
         boolean isLoggedIn = false;
         UserType role = null;
 
         if(userId != null){
-            role = userRepository.findById(userId).get().getUserType();
+            User user = userRepository.findById(userId).get();
+            name = user.getName();
+            role = user.getUserType();
             isLoggedIn = true;
         }
 
         return AuthInfo.builder()
+                .userId(userId)
+                .name(name)
                 .role(role)
                 .isLoggedIn(isLoggedIn)
                 .build();

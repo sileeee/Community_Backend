@@ -8,13 +8,18 @@ import lombok.Getter;
 @Getter
 public class AuthInfo {
 
-    @NotNull
+    private final Long userId;
+
+    private final String name;
+
     private final boolean isLoggedIn;
 
     private final UserType role;
 
     @Builder
-    public AuthInfo(boolean isLoggedIn, UserType role) {
+    public AuthInfo(Long userId, String name, boolean isLoggedIn, UserType role) {
+        this.userId = userId;
+        this.name = name;
         this.isLoggedIn = isLoggedIn;
         this.role = role;
     }
