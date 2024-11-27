@@ -7,6 +7,7 @@ import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
+import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
@@ -46,9 +47,9 @@ public class PostService {
 
         List<Post> posts;
         if(subCategory.equals(SubCategoryType.TOTAL)){
-            posts = postRepository.findAllByCategory(category,pageable).getContent();
+            posts = postRepository.findAllByCategoryAndStatus(category, PostStatus.PUBLIC, pageable).getContent();
         }else {
-            posts = postRepository.findAllByCategoryAndSubCategory(category, subCategory, pageable).getContent();
+            posts = postRepository.findAllByCategoryAndSubCategoryAndStatus(category, subCategory, PostStatus.PUBLIC, pageable).getContent();
         }
 
         List<String> userNames = new ArrayList<>();
