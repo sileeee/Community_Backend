@@ -3,7 +3,6 @@ package com.koreandubai.handubi.controller;
 import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
 import com.koreandubai.handubi.controller.dto.DetailedPost;
 import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
-import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.StatusEnum;
 import com.koreandubai.handubi.global.common.SubCategoryType;
@@ -31,7 +30,7 @@ public class PostController {
                                        @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                        @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
 
-        List<SimplePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
+        List<DetailedPost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
@@ -93,7 +92,7 @@ public class PostController {
     public SuccessResponse searchPostsByKeyword(@NotBlank @RequestParam String keyword,
                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                                 @RequestParam(required = false, defaultValue = "created_at", value = "criteria") String criteria) {
-        List<SimplePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
+        List<DetailedPost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
