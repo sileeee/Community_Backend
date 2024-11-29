@@ -1,5 +1,6 @@
 package com.koreandubai.handubi.service;
 
+import com.koreandubai.handubi.controller.dto.SecureUserInfo;
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
 import com.koreandubai.handubi.domain.EncryptedPassword;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -70,18 +72,20 @@ public class UserService {
     @Transactional
     public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto){
 
-        if (checkIsNameExist(dto.getName())){
+        Optional<User> updateUser = userRepository.findById(userId);
+
+        if (!Objects.equals(updateUser.get().getName(), dto.getName()) && checkIsNameExist(dto.getName())){
             throw new IllegalArgumentException("There is already a user with that name");
         }
-
-        Optional<User> updateUser = userRepository.findById(userId);
 
         EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
 
         updateUser.ifPresent(selectUser->{
             selectUser.setName(dto.getName());
-            selectUser.setSalt(pw.getSalt());
-            selectUser.setPassword(pw.getPassword());
+            if(!dto.getPassword().isEmpty()) {
+                selectUser.setSalt(pw.getSalt());
+                selectUser.setPassword(pw.getPassword());
+            }
             selectUser.setPhone(dto.getPhone());
 
             userRepository.save(selectUser);
@@ -89,8 +93,21 @@ public class UserService {
     }
 
     public Long getUserIdFromSession(HttpServletRequest request) {
+
         HttpSession session = request.getSession();
         return (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID))
                 .orElseThrow(UnauthorizedException::new);
+    }
+
+    public SecureUserInfo getSecureUserInfo(long userId) {
+
+        Optional<User> user = userRepository.findById(userId);
+
+        return SecureUserInfo.builder()
+                .id(userId)
+                .name(user.get().getName())
+                .email(user.get().getEmail())
+                .phone(user.get().getPhone())
+                .build();
     }
 }

@@ -60,4 +60,15 @@ public class UserController {
                 .message("Successfully update user information")
                 .build();
     }
+
+    @AuthRequired
+    @GetMapping("/{id}")
+    public SuccessResponse getSecureUserInfo(@PathVariable("id") final long id){
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .data(userService.getSecureUserInfo(id))
+                .message("Successfully update user information")
+                .build();
+    }
 }
