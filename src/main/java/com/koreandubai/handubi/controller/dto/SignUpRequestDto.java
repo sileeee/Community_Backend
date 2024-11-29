@@ -24,7 +24,7 @@ public class SignUpRequestDto {
     private final String password;
 
     @NotBlank(message = "You should enter a phone number.")
-    @Pattern(regexp = "[0-9]{10,11}", message = "You should enter a phone number with 10-11 digits.")
+    @Pattern(regexp = "[0-9]{9,11}", message = "You should enter a phone number with 10-11 digits.")
     private final String phone;
 
     private final LocalDate birthday;
