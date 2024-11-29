@@ -70,27 +70,31 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto){
+    public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto) {
 
-        Optional<User> updateUser = userRepository.findById(userId);
+        User updateUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
-        if (!Objects.equals(updateUser.get().getName(), dto.getName()) && checkIsNameExist(dto.getName())){
-            throw new IllegalArgumentException("There is already a user with that name");
+        if (!dto.getName().isEmpty() && !Objects.equals(updateUser.getName(), dto.getName())) {
+            if (checkIsNameExist(dto.getName())) {
+                throw new IllegalArgumentException("There is already a user with that name");
+            }
+            updateUser.setName(dto.getName());
         }
 
-        EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
+        if (!dto.getPassword().isEmpty()) {
+            EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
+            updateUser.setSalt(pw.getSalt());
+            updateUser.setPassword(pw.getPassword());
+        }
 
-        updateUser.ifPresent(selectUser->{
-            selectUser.setName(dto.getName());
-            if(!dto.getPassword().isEmpty()) {
-                selectUser.setSalt(pw.getSalt());
-                selectUser.setPassword(pw.getPassword());
-            }
-            selectUser.setPhone(dto.getPhone());
+        if (!dto.getPhone().isEmpty()) {
+            updateUser.setPhone(dto.getPhone());
+        }
 
-            userRepository.save(selectUser);
-        });
+        userRepository.save(updateUser);
     }
+
 
     public Long getUserIdFromSession(HttpServletRequest request) {
 
