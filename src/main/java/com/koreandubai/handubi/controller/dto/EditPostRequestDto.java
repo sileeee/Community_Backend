@@ -13,9 +13,10 @@ import lombok.Getter;
 public class EditPostRequestDto {
 
     @NotBlank(message = "You should enter a title.")
-    @Size(max = 50)
+    @Size(min = 1, max = 50)
     private final String title;
 
+    @Size(min = 1)
     @NotBlank(message = "You should enter a content.")
     private final String body;
 

@@ -13,11 +13,11 @@ import lombok.Getter;
 public class CreatePostRequestDto {
 
     @NotBlank(message = "You should enter a title.")
-    @Size(max = 50, min = 5)
+    @Size(max = 50, min = 1)
     private final String title;
 
     @NotBlank(message = "You should enter a content.")
-    @Size(min = 20)
+    @Size(min = 1)
     private final String body;
 
     @NotNull(message = "You should choose sub category of post.")

@@ -3,13 +3,14 @@ package com.koreandubai.handubi.service;
 import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
 import com.koreandubai.handubi.controller.dto.DetailedPost;
 import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
-import com.koreandubai.handubi.controller.dto.SimplePost;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
+import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
+import com.koreandubai.handubi.repository.LikeRepository;
 import com.koreandubai.handubi.repository.PostRepository;
 import com.koreandubai.handubi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,30 +38,34 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     private final RedisUtil redisUtil;
     private final UserService userService;
 
-    public List<SimplePost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria){
+    public List<DetailedPost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria){
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
         List<Post> posts;
         if(subCategory.equals(SubCategoryType.TOTAL)){
-            posts = postRepository.findAllByCategory(category,pageable).getContent();
+            posts = postRepository.findAllByCategoryAndStatus(category, PostStatus.PUBLIC, pageable).getContent();
         }else {
-            posts = postRepository.findAllByCategoryAndSubCategory(category, subCategory, pageable).getContent();
+            posts = postRepository.findAllByCategoryAndSubCategoryAndStatus(category, subCategory, PostStatus.PUBLIC, pageable).getContent();
         }
 
         List<String> userNames = new ArrayList<>();
+        List<Long> likes = new ArrayList<>();
         for (Post post : posts) {
             Optional<User> user = userRepository.findById(post.getUserId());
+            long like = likeRepository.countByPostId(post.getId());
             if(user.isEmpty()) {
                 throw new EntityNotFoundException("User with ID " + post.getUserId() + " not found");
             }
             userNames.add(user.get().getName());
+            likes.add(like);
         }
 
-        return SimplePost.toList(posts, userNames);
+        return DetailedPost.toList(posts, userNames, likes);
     }
 
     @Transactional
@@ -177,6 +182,8 @@ public class PostService {
             throw new EntityNotFoundException("User with ID " + postId + " not found");
         }
 
+        long like = likeRepository.countByPostId(post.get().getId());
+
         PreventDuplicatedView(user.get().getId(), postId);
 
         return DetailedPost.builder()
@@ -186,27 +193,32 @@ public class PostService {
                 .author(user.get().getName())
                 .category(post.get().getCategory())
                 .subCategory(post.get().getSubCategory())
+                .status(post.get().getStatus())
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())
+                .like(like)
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public List<SimplePost> searchPostsByKeyword(@NotBlank String keyword, int pageNo, String criteria) {
+    public List<DetailedPost> searchPostsByKeyword(@NotBlank String keyword, int pageNo, String criteria) {
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
         List<Post> posts =  postRepository.searchByKeyword(keyword, pageable).getContent();
 
         List<String> userNames = new ArrayList<>();
+        List<Long> likes = new ArrayList<>();
         for (Post post : posts) {
             Optional<User> user = userRepository.findById(post.getUserId());
+            long like = likeRepository.countByPostId(post.getId());
             if(user.isEmpty()) {
                 throw new EntityNotFoundException("User with ID " + post.getUserId() + " not found");
             }
             userNames.add(user.get().getName());
+            likes.add(like);
         }
 
-        return SimplePost.toList(posts, userNames);
+        return DetailedPost.toList(posts, userNames, likes);
     }
 }
