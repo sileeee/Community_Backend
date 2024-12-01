@@ -1,5 +1,6 @@
 package com.koreandubai.handubi.service;
 
+import com.koreandubai.handubi.controller.dto.SecureUserInfo;
 import com.koreandubai.handubi.controller.dto.SignUpRequestDto;
 import com.koreandubai.handubi.controller.dto.UpdateUserInfoRequestDto;
 import com.koreandubai.handubi.domain.EncryptedPassword;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -68,29 +70,48 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto){
+    public void updateUserInfo(long userId, UpdateUserInfoRequestDto dto) {
 
-        if (checkIsNameExist(dto.getName())){
-            throw new IllegalArgumentException("There is already a user with that name");
+        User updateUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        if (!dto.getName().isEmpty() && !Objects.equals(updateUser.getName(), dto.getName())) {
+            if (checkIsNameExist(dto.getName())) {
+                throw new IllegalArgumentException("There is already a user with that name");
+            }
+            updateUser.setName(dto.getName());
         }
 
-        Optional<User> updateUser = userRepository.findById(userId);
+        if (!dto.getPassword().isEmpty()) {
+            EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
+            updateUser.setSalt(pw.getSalt());
+            updateUser.setPassword(pw.getPassword());
+        }
 
-        EncryptedPassword pw = encryptPasswordWithSalt(dto.getPassword());
+        if (!dto.getPhone().isEmpty()) {
+            updateUser.setPhone(dto.getPhone());
+        }
 
-        updateUser.ifPresent(selectUser->{
-            selectUser.setName(dto.getName());
-            selectUser.setSalt(pw.getSalt());
-            selectUser.setPassword(pw.getPassword());
-            selectUser.setPhone(dto.getPhone());
-
-            userRepository.save(selectUser);
-        });
+        userRepository.save(updateUser);
     }
 
+
     public Long getUserIdFromSession(HttpServletRequest request) {
+
         HttpSession session = request.getSession();
         return (Long) Optional.ofNullable(session.getAttribute(SessionKey.LOGIN_USER_ID))
                 .orElseThrow(UnauthorizedException::new);
+    }
+
+    public SecureUserInfo getSecureUserInfo(long userId) {
+
+        Optional<User> user = userRepository.findById(userId);
+
+        return SecureUserInfo.builder()
+                .id(userId)
+                .name(user.get().getName())
+                .email(user.get().getEmail())
+                .phone(user.get().getPhone())
+                .build();
     }
 }
