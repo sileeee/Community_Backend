@@ -3,6 +3,7 @@ package com.koreandubai.handubi.controller;
 import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
 import com.koreandubai.handubi.controller.dto.DetailedPost;
 import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
+import com.koreandubai.handubi.controller.dto.GetUploadedImage;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.StatusEnum;
 import com.koreandubai.handubi.global.common.SubCategoryType;
@@ -13,7 +14,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -98,6 +100,30 @@ public class PostController {
                 .status(StatusEnum.OK)
                 .message("Successfully search posts")
                 .data(posts)
+                .build();
+    }
+
+    @PostMapping("/images")
+    public SuccessResponse uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+
+        String url = postService.uploadImage(file);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .data(url)
+                .message("Successfully upload image")
+                .build();
+    }
+
+    @GetMapping("/images/{imageName}")
+    public SuccessResponse getImage(@PathVariable String imageName) {
+
+        GetUploadedImage image = postService.getImage(imageName);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .data(image)
+                .message("Successfully get image")
                 .build();
     }
 }
