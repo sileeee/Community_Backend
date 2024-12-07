@@ -273,7 +273,7 @@ public class PostService {
         UserPrincipal owner = lookupService.lookupPrincipalByName(user);
         Files.setOwner(path, owner);
 
-        return "http://localhost:8080/posts/images/" + uniqueFileName;
+        return "https://handubi.com/api/posts/images/" + uniqueFileName;
     }
 
     public GetUploadedImage getImage(String imageName){

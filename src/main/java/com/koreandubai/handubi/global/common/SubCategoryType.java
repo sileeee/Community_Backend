@@ -45,7 +45,7 @@ public enum SubCategoryType {
 
     // child care
     CHILDBIRTH,
-    EDUCATION,
+    CHILD_CARE,
     PARENTING,
     ACADEMIY,
 
