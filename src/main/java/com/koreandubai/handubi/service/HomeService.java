@@ -1,6 +1,6 @@
 package com.koreandubai.handubi.service;
 
-import com.koreandubai.handubi.controller.dto.AdvertisementPost;
+import com.koreandubai.handubi.controller.dto.Thumbnail;
 import com.koreandubai.handubi.controller.dto.EditMainPostDto;
 import com.koreandubai.handubi.controller.dto.MainPost;
 import com.koreandubai.handubi.domain.Home;
@@ -59,9 +59,9 @@ public class HomeService {
         homeRepository.save(home);
     }
 
-    public List<AdvertisementPost> getAdvertisementPosts(long id) {
+    public List<Thumbnail> getThumbnail(long id) {
         return homeRepository.findAllByLocationId(id).stream()
-                .map(home -> AdvertisementPost.builder()
+                .map(home -> Thumbnail.builder()
                         .id(home.getId())
                         .imageUrl(home.getImageUrl())
                         .build())

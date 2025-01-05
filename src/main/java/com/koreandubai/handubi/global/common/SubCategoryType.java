@@ -19,6 +19,7 @@ public enum SubCategoryType {
     DAY,
 
     // Real Estate
+    INFO,
     BUY,
     HANDOVER,
     RENT,
@@ -44,10 +45,9 @@ public enum SubCategoryType {
 
 
     // child care
-    CHILDBIRTH,
     EDUCATION,
-    PARENTING,
     ACADEMIY,
+    //CHILDBIRTH
 
     // Life
     HOSPITAL,
@@ -57,6 +57,9 @@ public enum SubCategoryType {
     DELIVER,
     CAR,
     COMPANY,
+    PARENTING,
+    INVESTMENT,
+    LAW,
 
     // Club
     SPORT,
