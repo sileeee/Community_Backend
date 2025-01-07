@@ -15,7 +15,7 @@ public class CommentRequestDto {
     private Long postId;
 
     @NotBlank(message = "You should enter a content.")
-    @Size(max = 50, min = 1)
+    @Size(max = 200, min = 1)
     private String content;
 
     private Long preCommentId;

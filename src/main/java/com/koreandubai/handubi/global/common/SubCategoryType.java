@@ -47,7 +47,6 @@ public enum SubCategoryType {
     // child care
     EDUCATION,
     ACADEMIY,
-    //CHILDBIRTH
 
     // Life
     HOSPITAL,
