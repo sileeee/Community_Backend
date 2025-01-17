@@ -18,8 +18,15 @@ public class RedisSessionConfig {
     @Value("${spring.redis.session.port}")
     private int port;
 
+    @Value("${spring.redis.session.password:}")
+    private String password;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port));
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
+        if (!password.isEmpty()) {
+            configuration.setPassword(password); // 비밀번호 설정
+        }
+        return new LettuceConnectionFactory(configuration);
     }
 }

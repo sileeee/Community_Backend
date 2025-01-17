@@ -27,7 +27,7 @@ public class DetailedPost {
 
     private CategoryType category;
 
-    private PostStatus status;
+    private PostStatus postStatus;
 
     private long view;
 
@@ -37,13 +37,13 @@ public class DetailedPost {
 
 
     @Builder
-    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus status, long view, Long like, LocalDateTime createdAt) {
+    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus postStatus, long view, Long like, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.author = author;
         this.category = category;
-        this.status = status;
+        this.postStatus = postStatus;
         this.subCategory = subCategory;
         this.view = view;
         this.like = like;

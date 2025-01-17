@@ -30,22 +30,16 @@ public class EditRealEstatePostRequestDto {
     @NotNull(message = "You should choose postStatus of post.")
     private final PostStatus postStatus;
 
-    @NotNull(message = "You should choose status of post.")
     private final String thumbnailUrl;
 
-    @NotNull(message = "You should choose innerArea of post.")
     private final Long innerArea;
 
-    @NotNull(message = "You should choose totalArea of post.")
     private final Long totalArea;
 
-    @NotNull(message = "You should choose state of post.")
     private final String state;
 
-    @NotNull(message = "You should choose price of post.")
     private final Long price;
 
-    @NotNull(message = "You should choose productStatus of post.")
     private final ProductStatus productStatus;
 
 

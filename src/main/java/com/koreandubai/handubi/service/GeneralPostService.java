@@ -83,7 +83,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
                 .subCategory(dto.getSubCategory())
                 .userId(userId)
                 .view(0L)
-                .postStatus(dto.getStatus())
+                .postStatus(dto.getPostStatus())
                 .lastModified(LocalDateTime.now())
                 .build();
 
@@ -122,7 +122,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
             selectPost.setTitle(dto.getTitle());
             selectPost.setBody(dto.getBody());
             selectPost.setSubCategory(dto.getSubCategory());
-            selectPost.setPostStatus(dto.getStatus());
+            selectPost.setPostStatus(dto.getPostStatus());
             selectPost.setLastModified(LocalDateTime.now());
 
             postRepository.save(selectPost);
@@ -153,7 +153,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
                 .author(user.get().getName())
                 .category(post.get().getCategory())
                 .subCategory(post.get().getSubCategory())
-                .status(post.get().getPostStatus())
+                .postStatus(post.get().getPostStatus())
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())
                 .like(like)
