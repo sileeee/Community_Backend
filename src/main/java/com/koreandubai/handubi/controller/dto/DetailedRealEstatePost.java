@@ -1,10 +1,7 @@
 package com.koreandubai.handubi.controller.dto;
 
 import com.koreandubai.handubi.domain.RealEstatePost;
-import com.koreandubai.handubi.global.common.PostStatus;
-import com.koreandubai.handubi.global.common.ProductStatus;
-import com.koreandubai.handubi.global.common.ProductType;
-import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,7 +36,7 @@ public class DetailedRealEstatePost {
 
     private final Long totalArea;
 
-    private final String state;
+    private final State state;
 
     private final Long price;
 
@@ -49,7 +46,7 @@ public class DetailedRealEstatePost {
 
 
     @Builder
-    public DetailedRealEstatePost(Long id, String title, String body, String author, SubCategoryType subCategory, ProductType productType, PostStatus postStatus, long view, String thumbnailUrl, Long innerArea, Long totalArea, String state, Long price, LocalDateTime createdAt, ProductStatus productStatus, Long like) {
+    public DetailedRealEstatePost(Long id, String title, String body, String author, SubCategoryType subCategory, ProductType productType, PostStatus postStatus, long view, String thumbnailUrl, Long innerArea, Long totalArea, State state, Long price, LocalDateTime createdAt, ProductStatus productStatus, Long like) {
         this.id = id;
         this.title = title;
         this.body = body;

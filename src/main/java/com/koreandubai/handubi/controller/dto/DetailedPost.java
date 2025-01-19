@@ -54,11 +54,13 @@ public class DetailedPost {
         return DetailedPost.builder()
                 .id(post.getId())
                 .title(post.getTitle())
+                .body(post.getBody())
                 .author(author)
                 .category(post.getCategory())
                 .subCategory(post.getSubCategory())
                 .view(post.getView())
                 .like(like)
+                .postStatus(post.getPostStatus())
                 .createdAt(post.getCreatedAt())
                 .build();
     }

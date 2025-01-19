@@ -64,13 +64,13 @@ public class RealEstatePost {
     @Column(name = "total_area")
     private Long totalArea;
 
-    @Column(length = 50)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     private Long price;
 
     @Builder
-    public RealEstatePost(Long id, SubCategoryType subCategory, ProductType productType, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified, ProductStatus productStatus, long innerArea, long totalArea, String state, long price) {
+    public RealEstatePost(Long id, SubCategoryType subCategory, ProductType productType, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified, ProductStatus productStatus, long innerArea, long totalArea, State state, long price) {
         this.id = id;
         this.subCategory = subCategory;
         this.productType = productType;

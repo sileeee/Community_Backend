@@ -1,9 +1,6 @@
 package com.koreandubai.handubi.controller.dto;
 
-import com.koreandubai.handubi.global.common.PostStatus;
-import com.koreandubai.handubi.global.common.ProductStatus;
-import com.koreandubai.handubi.global.common.ProductType;
-import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,7 +33,7 @@ public class CreateRealEstatePostRequestDto {
 
     private final Long totalArea;
 
-    private final String state;
+    private final State state;
 
     private final Long price;
 
@@ -44,7 +41,7 @@ public class CreateRealEstatePostRequestDto {
 
 
     @Builder
-    public CreateRealEstatePostRequestDto(String title, String body, SubCategoryType subCategory, ProductType productType, PostStatus postStatus, String thumbnailUrl, Long innerArea, Long totalArea, String state, Long price, ProductStatus productStatus) {
+    public CreateRealEstatePostRequestDto(String title, String body, SubCategoryType subCategory, ProductType productType, PostStatus postStatus, String thumbnailUrl, Long innerArea, Long totalArea, State state, Long price, ProductStatus productStatus) {
         this.title = title;
         this.body = body;
         this.subCategory = subCategory;

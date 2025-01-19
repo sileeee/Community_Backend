@@ -62,7 +62,7 @@ public class ImageService {
         UserPrincipal owner = lookupService.lookupPrincipalByName(user);
         Files.setOwner(path, owner);
 
-        return "https://handubi.com/api/posts/images/" + uniqueFileName;
+        return "https://handubi.com/api/images/" + uniqueFileName;
     }
 
     public GetUploadedImage getImage(String imageName){

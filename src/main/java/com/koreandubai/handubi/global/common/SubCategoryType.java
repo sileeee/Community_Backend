@@ -22,7 +22,9 @@ public enum SubCategoryType {
     INFO,
     BUY,
     HANDOVER,
+    URGENT_HANDOVER,
     RENT,
+    OFF_PLAN,
 
     // Second Hand
     ELECTRONIC,
