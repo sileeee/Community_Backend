@@ -1,5 +1,6 @@
 package com.koreandubai.handubi.domain;
 
+import com.koreandubai.handubi.global.common.CategoryType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,11 +26,16 @@ public class Home {
     @Column(name = "image_url", length = 2048)
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category_type")
+    private CategoryType categoryType;
+
     @Builder
-    public Home(Long postId, Long locationId, String imageUrl) {
+    public Home(Long postId, Long locationId, String imageUrl, CategoryType categoryType) {
         this.postId = postId;
         this.locationId = locationId;
         this.imageUrl = imageUrl;
+        this.categoryType = categoryType;
     }
 
     public Home() {
