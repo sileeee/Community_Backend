@@ -1,13 +1,16 @@
 package com.koreandubai.handubi.service;
 
-import com.koreandubai.handubi.controller.dto.AdvertisementPost;
+import com.koreandubai.handubi.controller.dto.Thumbnail;
 import com.koreandubai.handubi.controller.dto.EditMainPostDto;
 import com.koreandubai.handubi.controller.dto.MainPost;
 import com.koreandubai.handubi.domain.Home;
 import com.koreandubai.handubi.domain.Post;
+import com.koreandubai.handubi.domain.RealEstatePost;
+import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.util.auth.AuthRequired;
 import com.koreandubai.handubi.repository.HomeRepository;
 import com.koreandubai.handubi.repository.PostRepository;
+import com.koreandubai.handubi.repository.RealEstateRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,26 +23,41 @@ public class HomeService {
 
     private final HomeRepository homeRepository;
     private final PostRepository postRepository;
+    private final RealEstateRepository realEstateRepository;
 
     public List<MainPost> getMainPosts() {
 
         List<Home> homeList = homeRepository.findAll();
 
         return homeList.stream()
-                .map(home -> {
-                    Post post = postRepository.findById(home.getPostId())
-                            .orElseThrow(() -> new EntityNotFoundException("Post not found for ID: " + home.getPostId()));
+            .map(home -> {
+                if (home.getCategoryType().equals(CategoryType.REAL_ESTATE)) {
+                    RealEstatePost realEstatePost = realEstateRepository.getPostsById(home.getPostId())
+                        .orElseThrow(() -> new EntityNotFoundException("RealEstatePost not found for ID: " + home.getPostId()));
+
                     return MainPost.builder()
-                            .postId(home.getPostId())
-                            .locationId(home.getLocationId())
-                            .title(post.getTitle())
-                            .content(post.getBody())
-                            .imageUrl(home.getImageUrl())
-                            .categoryType(post.getCategory())
-                            .subCategoryType(post.getSubCategory())
-                            .build();
-                })
-                .collect(Collectors.toList());
+                        .postId(home.getPostId())
+                        .locationId(home.getLocationId())
+                        .title(realEstatePost.getTitle())
+                        .content(realEstatePost.getBody())
+                        .imageUrl(home.getImageUrl())
+                        .categoryType(CategoryType.REAL_ESTATE)
+                        .subCategoryType(realEstatePost.getSubCategory())
+                        .build();
+                }
+                Post post = postRepository.findById(home.getPostId())
+                    .orElseThrow(() -> new EntityNotFoundException("Post not found for ID: " + home.getPostId()));
+
+                return MainPost.builder()
+                    .postId(home.getPostId())
+                    .locationId(home.getLocationId())
+                    .title(post.getTitle())
+                    .content(post.getBody())
+                    .imageUrl(home.getImageUrl())
+                    .categoryType(post.getCategory())
+                    .subCategoryType(post.getSubCategory())
+                    .build();
+            }).collect(Collectors.toList());
     }
 
 
@@ -59,9 +77,9 @@ public class HomeService {
         homeRepository.save(home);
     }
 
-    public List<AdvertisementPost> getAdvertisementPosts(long id) {
+    public List<Thumbnail> getThumbnail(long id) {
         return homeRepository.findAllByLocationId(id).stream()
-                .map(home -> AdvertisementPost.builder()
+                .map(home -> Thumbnail.builder()
                         .id(home.getId())
                         .imageUrl(home.getImageUrl())
                         .build())

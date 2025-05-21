@@ -4,14 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AdvertisementPost {
+public class Thumbnail {
 
     private final long id;
 
     private final String imageUrl;
 
     @Builder
-    public AdvertisementPost(long id, String imageUrl) {
+    public Thumbnail(long id, String imageUrl) {
         this.id = id;
         this.imageUrl = imageUrl;
     }

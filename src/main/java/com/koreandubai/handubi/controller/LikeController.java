@@ -1,6 +1,8 @@
 package com.koreandubai.handubi.controller;
 
 import com.koreandubai.handubi.controller.dto.LikeRequestDto;
+import com.koreandubai.handubi.controller.dto.TopLikedPostDto;
+import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.StatusEnum;
 import com.koreandubai.handubi.global.common.SuccessResponse;
 import com.koreandubai.handubi.service.LikeService;
@@ -9,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -52,6 +56,20 @@ public class LikeController {
                 .status(StatusEnum.OK)
                 .message("Successfully get user's like info")
                 .data(likeCount)
+                .build();
+    }
+
+    @GetMapping
+    public SuccessResponse TopLikedPosts(@RequestParam(required = false, value = "category") CategoryType categoryType,
+                                         @RequestParam(required = false, value = "startDate") LocalDateTime startDate,
+                                         @RequestParam(required = false, value = "endDate") LocalDateTime endDate) {
+
+        List<TopLikedPostDto> posts = likeService.getTopLikedPosts(categoryType, startDate, endDate);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully get user's like info")
+                .data(posts)
                 .build();
     }
 }

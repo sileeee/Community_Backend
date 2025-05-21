@@ -2,6 +2,7 @@ package com.koreandubai.handubi.global.common;
 
 public enum CategoryType {
 
+    GENERAL,
     JOB_SEARCH,
     NEWS,
     LIFE,

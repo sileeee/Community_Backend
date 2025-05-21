@@ -1,38 +1,30 @@
 package com.koreandubai.handubi.controller;
 
-import com.koreandubai.handubi.controller.dto.CreatePostRequestDto;
-import com.koreandubai.handubi.controller.dto.DetailedPost;
-import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
-import com.koreandubai.handubi.controller.dto.GetUploadedImage;
-import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.StatusEnum;
-import com.koreandubai.handubi.global.common.SubCategoryType;
-import com.koreandubai.handubi.global.common.SuccessResponse;
-import com.koreandubai.handubi.service.PostService;
+import com.koreandubai.handubi.controller.dto.*;
+import com.koreandubai.handubi.global.common.*;
+import com.koreandubai.handubi.service.RealEstatePostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/posts")
-public class PostController {
+@RequestMapping("/real-estate")
+public class RealEstateController {
 
-    private final PostService postService;
-
+    private final RealEstatePostService postService;
 
     @GetMapping
     public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category") CategoryType categoryType,
                                        @RequestParam(required = false, value = "subCategory", defaultValue = "TOTAL") SubCategoryType subCategory,
                                        @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria,
+                                       @RequestParam(required = false, value = "postType") PostType postType) {
 
-        List<DetailedPost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
+        List<DetailedRealEstatePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria, postType);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
@@ -44,7 +36,7 @@ public class PostController {
     @GetMapping("/{id}")
     public SuccessResponse getPost(@PathVariable("id") long postId) {
 
-        DetailedPost post = postService.getSinglePost(postId);
+        DetailedRealEstatePost post = postService.getSinglePost(postId);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
@@ -56,7 +48,7 @@ public class PostController {
     @PostMapping("/new/{category}")
     public SuccessResponse createPost(HttpServletRequest request,
                                       @PathVariable(value = "category") CategoryType categoryType,
-                                      @Valid @RequestBody CreatePostRequestDto requestDto) {
+                                      @Valid @RequestBody CreateRealEstatePostRequestDto requestDto) {
 
         postService.createPost(request, categoryType, requestDto);
 
@@ -80,7 +72,7 @@ public class PostController {
     @PutMapping("/edit/{id}")
     public SuccessResponse editPost(HttpServletRequest request,
                                     @PathVariable("id") long postId,
-                                    @Valid @RequestBody EditPostRequestDto requestDto) {
+                                    @Valid @RequestBody EditRealEstatePostRequestDto requestDto) {
 
         postService.editPost(request, postId, requestDto);
 
@@ -94,36 +86,12 @@ public class PostController {
     public SuccessResponse searchPostsByKeyword(@NotBlank @RequestParam String keyword,
                                                 @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                                 @RequestParam(required = false, defaultValue = "created_at", value = "criteria") String criteria) {
-        List<DetailedPost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
+        List<DetailedRealEstatePost> posts = postService.searchPostsByKeyword(keyword, pageNo, criteria);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Successfully search posts")
                 .data(posts)
-                .build();
-    }
-
-    @PostMapping("/images")
-    public SuccessResponse uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
-
-        String url = postService.uploadImage(file);
-
-        return SuccessResponse.builder()
-                .status(StatusEnum.OK)
-                .data(url)
-                .message("Successfully upload image")
-                .build();
-    }
-
-    @GetMapping("/images/{imageName}")
-    public SuccessResponse getImage(@PathVariable String imageName) {
-
-        GetUploadedImage image = postService.getImage(imageName);
-
-        return SuccessResponse.builder()
-                .status(StatusEnum.OK)
-                .data(image)
-                .message("Successfully get image")
                 .build();
     }
 }

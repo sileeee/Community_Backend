@@ -1,6 +1,6 @@
 package com.koreandubai.handubi.controller;
 
-import com.koreandubai.handubi.controller.dto.AdvertisementPost;
+import com.koreandubai.handubi.controller.dto.Thumbnail;
 import com.koreandubai.handubi.controller.dto.EditMainPostDto;
 import com.koreandubai.handubi.controller.dto.MainPost;
 import com.koreandubai.handubi.global.common.StatusEnum;
@@ -44,9 +44,9 @@ public class HomeController {
     }
 
     @GetMapping("/posts/{id}")
-    public SuccessResponse getAdvertisementPosts(@PathVariable("id") final long id) {
+    public SuccessResponse getThumbnail(@PathVariable("id") final long id) {
 
-        List<AdvertisementPost> posts = homeService.getAdvertisementPosts(id);
+        List<Thumbnail> posts = homeService.getThumbnail(id);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)

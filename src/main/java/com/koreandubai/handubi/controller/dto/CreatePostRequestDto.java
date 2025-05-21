@@ -1,6 +1,7 @@
 package com.koreandubai.handubi.controller.dto;
 
 import com.koreandubai.handubi.global.common.PostStatus;
+import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,18 +21,24 @@ public class CreatePostRequestDto {
     @Size(min = 1)
     private final String body;
 
+    private final String thumbnailUrl;
+
     @NotNull(message = "You should choose sub category of post.")
     private final SubCategoryType subCategory;
 
     @NotNull(message = "You should choose status of post.")
-    private final PostStatus status;
+    private final PostStatus postStatus;
+
+    private final PostType postType;
 
 
     @Builder
-    public CreatePostRequestDto(String title, String body, SubCategoryType subCategory, PostStatus status) {
+    public CreatePostRequestDto(String title, String body, String thumbnailUrl, SubCategoryType subCategory, PostStatus postStatus, PostType postType) {
         this.title = title;
         this.body = body;
+        this.thumbnailUrl = thumbnailUrl;
         this.subCategory = subCategory;
-        this.status = status;
+        this.postStatus = postStatus;
+        this.postType = postType;
     }
 }
