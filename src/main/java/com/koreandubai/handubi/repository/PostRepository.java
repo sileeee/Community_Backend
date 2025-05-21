@@ -3,6 +3,7 @@ package com.koreandubai.handubi.repository;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.PostStatus;
+import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,33 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllByCategoryAndPostStatus(CategoryType categoryType, PostStatus postStatus, Pageable pageable);
+    Page<Post> findAllByCategoryAndPostStatus(
+            CategoryType categoryType,
+            PostStatus postStatus,
+            Pageable pageable
+    );
 
-    Page<Post> findAllByCategoryAndSubCategoryAndPostStatus(CategoryType categoryType, SubCategoryType subCategory, PostStatus postStatus, Pageable pageable);
+    Page<Post> findAllByCategoryAndSubCategoryAndPostStatus(
+            CategoryType categoryType,
+            SubCategoryType subCategory,
+            PostStatus postStatus,
+            Pageable pageable
+    );
+
+    Page<Post> findAllByCategoryAndSubCategoryAndPostStatusAndPostType(
+            CategoryType categoryType,
+            SubCategoryType subCategory,
+            PostStatus postStatus,
+            PostType postType,
+            Pageable pageable
+    );
+
+    Page<Post> findAllByCategoryAndPostStatusAndPostType(
+            CategoryType categoryType,
+            PostStatus postStatus,
+            PostType postType,
+            Pageable pageable
+    );
 
     Optional<Post> getPostsById(Long postId);
 

@@ -17,14 +17,14 @@ public enum SubCategoryType {
     FULL_TIME,
     PART_TIME,
     DAY,
+    HIRING,
+    JOB_SEEKING,
 
     // Real Estate
     INFO,
     BUY,
     HANDOVER,
-    URGENT_HANDOVER,
     RENT,
-    OFF_PLAN,
 
     // Second Hand
     ELECTRONIC,

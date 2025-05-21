@@ -8,6 +8,7 @@ import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
 import com.koreandubai.handubi.repository.LikeRepository;
@@ -46,7 +47,7 @@ public class RealEstatePostService extends AbstractPostService<DetailedRealEstat
     }
 
     @Override
-    public List<DetailedRealEstatePost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria){
+    public List<DetailedRealEstatePost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria, PostType postType){
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
@@ -121,18 +122,16 @@ public class RealEstatePostService extends AbstractPostService<DetailedRealEstat
                 .subCategory(dto.getSubCategory())
                 .title(dto.getTitle())
                 .body(dto.getBody())
-                .subCategory(dto.getSubCategory())
                 .productType(dto.getProductType())
                 .userId(userId)
                 .postStatus(dto.getPostStatus())
                 .view(0L)
                 .thumbnailUrl(dto.getThumbnailUrl())
-                .postStatus(dto.getPostStatus())
                 .productStatus(dto.getProductStatus())
-                .innerArea(dto.getInnerArea())
-                .totalArea(dto.getTotalArea())
+                .innerArea(dto.getInnerArea() != null ? dto.getInnerArea() : null)
+                .totalArea(dto.getTotalArea() != null ? dto.getTotalArea() : null)
                 .state(dto.getState())
-                .price(dto.getPrice())
+                .price(dto.getPrice() != null ? dto.getPrice() : null)
                 .lastModified(LocalDateTime.now())
                 .build();
 
@@ -179,8 +178,8 @@ public class RealEstatePostService extends AbstractPostService<DetailedRealEstat
             selectPost.setTotalArea(dto.getTotalArea());
             selectPost.setState(dto.getState());
             selectPost.setPrice(dto.getPrice());
-            selectPost.setPostStatus(dto.getPostStatus());
             selectPost.setProductType(dto.getProductType());
+            selectPost.setProductStatus(dto.getProductStatus());
             selectPost.setLastModified(LocalDateTime.now());
 
             realEstateRepository.save(selectPost);

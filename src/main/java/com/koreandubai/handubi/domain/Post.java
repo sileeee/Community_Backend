@@ -3,6 +3,7 @@ package com.koreandubai.handubi.domain;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.PostType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,10 @@ public class Post {
     @Column(nullable = false)
     private SubCategoryType subCategory;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_type")
+    private PostType postType;
+
     @Column(nullable = false)
     private String title;
 
@@ -57,7 +62,7 @@ public class Post {
     private LocalDateTime lastModified;
 
     @Builder
-    public Post(Long id, CategoryType category, SubCategoryType subCategory, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified) {
+    public Post(Long id, CategoryType category, SubCategoryType subCategory, String title, String body, Long userId, PostStatus postStatus, PostType postType, Long view, String thumbnailUrl, LocalDateTime lastModified) {
         this.id = id;
         this.category = category;
         this.subCategory = subCategory;
@@ -65,6 +70,7 @@ public class Post {
         this.body = body;
         this.userId = userId;
         this.postStatus = postStatus;
+        this.postType = postType;
         this.view = view;
         this.thumbnailUrl = thumbnailUrl;
         this.createdAt = LocalDateTime.now();

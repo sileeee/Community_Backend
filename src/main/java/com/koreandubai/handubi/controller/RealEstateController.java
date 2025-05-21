@@ -1,10 +1,7 @@
 package com.koreandubai.handubi.controller;
 
 import com.koreandubai.handubi.controller.dto.*;
-import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.StatusEnum;
-import com.koreandubai.handubi.global.common.SubCategoryType;
-import com.koreandubai.handubi.global.common.SuccessResponse;
+import com.koreandubai.handubi.global.common.*;
 import com.koreandubai.handubi.service.RealEstatePostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,9 +21,10 @@ public class RealEstateController {
     public SuccessResponse getAllPosts(@RequestParam(required = false, value = "category") CategoryType categoryType,
                                        @RequestParam(required = false, value = "subCategory", defaultValue = "TOTAL") SubCategoryType subCategory,
                                        @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria,
+                                       @RequestParam(required = false, value = "postType") PostType postType) {
 
-        List<DetailedRealEstatePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria);
+        List<DetailedRealEstatePost> products = postService.getPosts(categoryType, subCategory, pageNo, criteria, postType);
 
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
