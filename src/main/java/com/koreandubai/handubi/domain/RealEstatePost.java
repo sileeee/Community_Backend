@@ -70,7 +70,7 @@ public class RealEstatePost {
     private Long price;
 
     @Builder
-    public RealEstatePost(Long id, SubCategoryType subCategory, ProductType productType, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified, ProductStatus productStatus, long innerArea, long totalArea, State state, long price) {
+    public RealEstatePost(Long id, SubCategoryType subCategory, ProductType productType, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified, ProductStatus productStatus, Long innerArea, Long totalArea, State state, Long price) {
         this.id = id;
         this.subCategory = subCategory;
         this.productType = productType;

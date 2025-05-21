@@ -2,6 +2,7 @@ package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.PostType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 
@@ -10,7 +11,7 @@ import java.util.*;
 
 public interface PostService<T, CD, ED> {
 
-    List<T> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria);
+    List<T> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria, PostType postType);
 
     void createPost(HttpServletRequest request, CategoryType category, CD dto);
 

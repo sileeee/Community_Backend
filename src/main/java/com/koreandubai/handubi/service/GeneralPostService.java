@@ -8,6 +8,7 @@ import com.koreandubai.handubi.domain.User;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
 import com.koreandubai.handubi.repository.LikeRepository;
@@ -44,15 +45,29 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
     }
 
     @Override
-    public List<DetailedPost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria){
+    public List<DetailedPost> getPosts(CategoryType category, SubCategoryType subCategory, int pageNo, String criteria, PostType postType){
 
         Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
 
         List<Post> posts;
         if(subCategory.equals(SubCategoryType.TOTAL)){
-            posts = postRepository.findAllByCategoryAndPostStatus(category, PostStatus.PUBLIC, pageable).getContent();
-        }else {
-            posts = postRepository.findAllByCategoryAndSubCategoryAndPostStatus(category, subCategory, PostStatus.PUBLIC, pageable).getContent();
+            if (postType != null) {
+                posts = postRepository.findAllByCategoryAndPostStatusAndPostType(category, PostStatus.PUBLIC, postType, pageable).getContent();
+            } else {
+                posts = postRepository.findAllByCategoryAndPostStatus(category, PostStatus.PUBLIC, pageable).getContent();
+            }
+        } else {
+            if (postType == null) {
+                posts = postRepository.findAllByCategoryAndSubCategoryAndPostStatus(
+                        category, subCategory, PostStatus.PUBLIC, pageable
+                ).getContent();
+
+            } else {
+                posts = postRepository.findAllByCategoryAndSubCategoryAndPostStatusAndPostType(
+                        category, subCategory, PostStatus.PUBLIC, postType, pageable
+                ).getContent();
+
+            }
         }
 
         List<String> userNames = new ArrayList<>();
@@ -84,6 +99,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
                 .userId(userId)
                 .view(0L)
                 .postStatus(dto.getPostStatus())
+                .postType(dto.getPostType())
                 .lastModified(LocalDateTime.now())
                 .build();
 

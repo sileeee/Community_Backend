@@ -3,6 +3,7 @@ package com.koreandubai.handubi.controller.dto;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.PostStatus;
+import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,9 +38,11 @@ public class DetailedPost {
 
     private String thumbnailUrl;
 
+    private PostType postType;
+
 
     @Builder
-    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus postStatus, long view, Long like, LocalDateTime createdAt, String thumbnailUrl) {
+    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus postStatus, long view, Long like, LocalDateTime createdAt, String thumbnailUrl, PostType postType) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -51,6 +54,7 @@ public class DetailedPost {
         this.like = like;
         this.createdAt = createdAt;
         this.thumbnailUrl = thumbnailUrl;
+        this.postType = postType;
     }
 
     public static DetailedPost toResponse(Post post, String author, Long like) {
@@ -66,6 +70,7 @@ public class DetailedPost {
                 .postStatus(post.getPostStatus())
                 .createdAt(post.getCreatedAt())
                 .thumbnailUrl(post.getThumbnailUrl())
+                .postType(post.getPostType())
                 .build();
     }
 
