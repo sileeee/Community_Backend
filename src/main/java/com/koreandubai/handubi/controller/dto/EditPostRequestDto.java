@@ -24,17 +24,14 @@ public class EditPostRequestDto {
     private final SubCategoryType subCategory;
 
     @NotNull(message = "You should choose status of post.")
-    private final PostStatus postStatus;
-
-    private final String thumbnailUrl;
+    private final PostStatus status;
 
 
     @Builder
-    public EditPostRequestDto(String title, String body, SubCategoryType subCategory, PostStatus postStatus, String thumbnailUrl) {
+    public EditPostRequestDto(String title, String body, SubCategoryType subCategory, PostStatus status) {
         this.title = title;
         this.body = body;
         this.subCategory = subCategory;
-        this.postStatus = postStatus;
-        this.thumbnailUrl = thumbnailUrl;
+        this.status = status;
     }
 }

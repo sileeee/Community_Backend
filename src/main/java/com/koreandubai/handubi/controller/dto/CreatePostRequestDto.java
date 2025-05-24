@@ -20,21 +20,18 @@ public class CreatePostRequestDto {
     @Size(min = 1)
     private final String body;
 
-    private final String thumbnailUrl;
-
     @NotNull(message = "You should choose sub category of post.")
     private final SubCategoryType subCategory;
 
     @NotNull(message = "You should choose status of post.")
-    private final PostStatus postStatus;
+    private final PostStatus status;
 
 
     @Builder
-    public CreatePostRequestDto(String title, String body, String thumbnailUrl, SubCategoryType subCategory, PostStatus postStatus) {
+    public CreatePostRequestDto(String title, String body, SubCategoryType subCategory, PostStatus status) {
         this.title = title;
         this.body = body;
-        this.thumbnailUrl = thumbnailUrl;
         this.subCategory = subCategory;
-        this.postStatus = postStatus;
+        this.status = status;
     }
 }

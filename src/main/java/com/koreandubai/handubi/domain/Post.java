@@ -42,13 +42,10 @@ public class Post {
     private Long userId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "post_status")
-    private PostStatus postStatus;
+    @Column(nullable = false)
+    private PostStatus status;
 
     private Long view;
-
-    @Column(name = "thumbnail_url", length = 2048)
-    private String thumbnailUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -57,16 +54,15 @@ public class Post {
     private LocalDateTime lastModified;
 
     @Builder
-    public Post(Long id, CategoryType category, SubCategoryType subCategory, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified) {
+    public Post(Long id, CategoryType category, SubCategoryType subCategory, String title, String body, Long userId, PostStatus status, Long view, LocalDateTime lastModified) {
         this.id = id;
         this.category = category;
         this.subCategory = subCategory;
         this.title = title;
         this.body = body;
         this.userId = userId;
-        this.postStatus = postStatus;
+        this.status = status;
         this.view = view;
-        this.thumbnailUrl = thumbnailUrl;
         this.createdAt = LocalDateTime.now();
         this.lastModified = lastModified;
     }
