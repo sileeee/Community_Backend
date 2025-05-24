@@ -1,8 +1,6 @@
 package com.koreandubai.handubi.domain;
 
-import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.PostStatus;
-import com.koreandubai.handubi.global.common.SubCategoryType;
+import com.koreandubai.handubi.global.common.*;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,20 +14,20 @@ import java.time.LocalDateTime;
 @Table(indexes = {
         @Index(name = "idx_title", columnList = "title"),
         @Index(name = "idx_body", columnList = "body")
-})
-public class Post {
+}, name = "`real_estate_post`")
+public class RealEstatePost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CategoryType category;
+    @Column(nullable = false, name = "sub_category")
+    private SubCategoryType subCategory;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SubCategoryType subCategory;
+    @Column(name = "product_type")
+    private ProductType productType;
 
     @Column(nullable = false)
     private String title;
@@ -56,11 +54,26 @@ public class Post {
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_status")
+    private ProductStatus productStatus;
+
+    @Column(name = "inner_area")
+    private Long innerArea;
+
+    @Column(name = "total_area")
+    private Long totalArea;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
+
+    private Long price;
+
     @Builder
-    public Post(Long id, CategoryType category, SubCategoryType subCategory, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified) {
+    public RealEstatePost(Long id, SubCategoryType subCategory, ProductType productType, String title, String body, Long userId, PostStatus postStatus, Long view, String thumbnailUrl, LocalDateTime lastModified, ProductStatus productStatus, long innerArea, long totalArea, State state, long price) {
         this.id = id;
-        this.category = category;
         this.subCategory = subCategory;
+        this.productType = productType;
         this.title = title;
         this.body = body;
         this.userId = userId;
@@ -69,9 +82,14 @@ public class Post {
         this.thumbnailUrl = thumbnailUrl;
         this.createdAt = LocalDateTime.now();
         this.lastModified = lastModified;
+        this.productStatus = productStatus;
+        this.innerArea = innerArea;
+        this.totalArea = totalArea;
+        this.state = state;
+        this.price = price;
     }
 
-    public Post() {
+    public RealEstatePost() {
 
     }
 }

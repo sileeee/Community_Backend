@@ -27,7 +27,7 @@ public class DetailedPost {
 
     private CategoryType category;
 
-    private PostStatus status;
+    private PostStatus postStatus;
 
     private long view;
 
@@ -35,31 +35,37 @@ public class DetailedPost {
 
     private LocalDateTime createdAt;
 
+    private String thumbnailUrl;
+
 
     @Builder
-    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus status, long view, Long like, LocalDateTime createdAt) {
+    public DetailedPost(Long id, String title, String body, String author, CategoryType category, SubCategoryType subCategory, PostStatus postStatus, long view, Long like, LocalDateTime createdAt, String thumbnailUrl) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.author = author;
         this.category = category;
-        this.status = status;
+        this.postStatus = postStatus;
         this.subCategory = subCategory;
         this.view = view;
         this.like = like;
         this.createdAt = createdAt;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public static DetailedPost toResponse(Post post, String author, Long like) {
         return DetailedPost.builder()
                 .id(post.getId())
                 .title(post.getTitle())
+                .body(post.getBody())
                 .author(author)
                 .category(post.getCategory())
                 .subCategory(post.getSubCategory())
                 .view(post.getView())
                 .like(like)
+                .postStatus(post.getPostStatus())
                 .createdAt(post.getCreatedAt())
+                .thumbnailUrl(post.getThumbnailUrl())
                 .build();
     }
 

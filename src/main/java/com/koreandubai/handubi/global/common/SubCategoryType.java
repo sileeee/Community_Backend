@@ -22,7 +22,9 @@ public enum SubCategoryType {
     INFO,
     BUY,
     HANDOVER,
+    URGENT_HANDOVER,
     RENT,
+    OFF_PLAN,
 
     // Second Hand
     ELECTRONIC,
@@ -46,7 +48,7 @@ public enum SubCategoryType {
 
     // child care
     EDUCATION,
-    ACADEMIY,
+    ACADEMY,
 
     // Life
     HOSPITAL,
