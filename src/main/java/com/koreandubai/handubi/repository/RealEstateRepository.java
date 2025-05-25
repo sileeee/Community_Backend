@@ -24,4 +24,6 @@ public interface RealEstateRepository extends JpaRepository<RealEstatePost, Long
             "ORDER BY created_at DESC",
             nativeQuery = true)
     Page<RealEstatePost> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    Page<RealEstatePost> findAllByUserId(Long userId, Pageable pageable);
 }

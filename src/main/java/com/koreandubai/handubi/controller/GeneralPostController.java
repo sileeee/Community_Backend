@@ -96,4 +96,19 @@ public class GeneralPostController {
                 .data(posts)
                 .build();
     }
+
+    @GetMapping("/my")
+    public SuccessResponse getAllMyPosts(HttpServletRequest request,
+                                         @RequestParam(required = false, value = "category") CategoryType categoryType,
+                                         @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                         @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+
+        List<DetailedPost> products = postService.getMyPosts(request, categoryType, pageNo, criteria);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully get list of my posts")
+                .data(products)
+                .build();
+    }
 }

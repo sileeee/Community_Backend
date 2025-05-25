@@ -13,6 +13,8 @@ public enum CategoryType {
     CHILD_CARE,
     CLUB,
     FREE_BOARD,
-    KOREAN_COMPANY;
+    KOREAN_COMPANY,
+    LINK_HUB,
+    TOTAL;;
 }
 

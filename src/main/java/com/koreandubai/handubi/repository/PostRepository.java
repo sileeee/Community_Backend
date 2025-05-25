@@ -55,4 +55,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p.id FROM Post p WHERE p.category = :categoryType")
     List<Long> findPostIdsByCategory(@Param("categoryType") CategoryType categoryType);
+
+    Page<Post> findAllByCategoryAndUserId(CategoryType category, Long userId, Pageable pageable);
+
+    Page<Post> findAllByUserId(Long userId, Pageable pageable);
 }

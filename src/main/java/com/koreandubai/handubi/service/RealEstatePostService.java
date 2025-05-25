@@ -209,6 +209,30 @@ public class RealEstatePostService extends AbstractPostService<DetailedRealEstat
         return DetailedRealEstatePost.toList(posts, userNames, likes);
     }
 
+    @Override
+    public List<DetailedRealEstatePost> getMyPosts(HttpServletRequest request, CategoryType category, int pageNo, String criteria){
+
+        Long userId = userService.getUserIdFromSession(request);
+        Pageable pageable = PageRequest.of(pageNo, NOMAL_PAGE_SIZE, Sort.by(Sort.Direction.DESC, criteria));
+
+        List<RealEstatePost> posts;
+        posts = realEstateRepository.findAllByUserId(userId, pageable).getContent();
+
+        List<String> userNames = new ArrayList<>();
+        List<Long> likes = new ArrayList<>();
+        for (RealEstatePost post : posts) {
+            Optional<User> user = userRepository.findById(post.getUserId());
+            long like = likeRepository.countByPostId(post.getId());
+            if(user.isEmpty()) {
+                throw new EntityNotFoundException("User with ID " + post.getUserId() + " not found");
+            }
+            userNames.add(user.get().getName());
+            likes.add(like);
+        }
+
+        return DetailedRealEstatePost.toList(posts, userNames, likes);
+    }
+
     public void IncreaseViewCount(Long postId){
 
         Optional<RealEstatePost> updatePost = realEstateRepository.getPostsById(postId);

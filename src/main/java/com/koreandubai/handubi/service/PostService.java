@@ -1,5 +1,6 @@
 package com.koreandubai.handubi.service;
 
+import com.koreandubai.handubi.controller.dto.DetailedPost;
 import com.koreandubai.handubi.global.common.CategoryType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
 import com.koreandubai.handubi.global.common.PostType;
@@ -29,4 +30,5 @@ public interface PostService<T, CD, ED> {
 
     List<T> searchPostsByKeyword(@NotBlank String keyword, int pageNo, String criteria);
 
+    List<T> getMyPosts(HttpServletRequest request, CategoryType category, int pageNo, String criteria);
 }

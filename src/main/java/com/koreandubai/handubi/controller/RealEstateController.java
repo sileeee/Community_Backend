@@ -94,4 +94,19 @@ public class RealEstateController {
                 .data(posts)
                 .build();
     }
+
+    @GetMapping("/my")
+    public SuccessResponse getAllMyPosts(HttpServletRequest request,
+                                       @RequestParam(required = false, value = "category") CategoryType categoryType,
+                                       @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                       @RequestParam(required = false, defaultValue = "createdAt", value = "criteria") String criteria) {
+
+        List<DetailedRealEstatePost> products = postService.getMyPosts(request, categoryType, pageNo, criteria);
+
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully get list of posts")
+                .data(products)
+                .build();
+    }
 }
