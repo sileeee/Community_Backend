@@ -5,10 +5,7 @@ import com.koreandubai.handubi.controller.dto.DetailedPost;
 import com.koreandubai.handubi.controller.dto.EditPostRequestDto;
 import com.koreandubai.handubi.domain.Post;
 import com.koreandubai.handubi.domain.User;
-import com.koreandubai.handubi.global.common.CategoryType;
-import com.koreandubai.handubi.global.common.PostStatus;
-import com.koreandubai.handubi.global.common.SubCategoryType;
-import com.koreandubai.handubi.global.common.PostType;
+import com.koreandubai.handubi.global.common.*;
 import com.koreandubai.handubi.global.exception.UnauthorizedException;
 import com.koreandubai.handubi.global.util.RedisUtil;
 import com.koreandubai.handubi.repository.LikeRepository;
@@ -111,11 +108,13 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
     public void deletePost(HttpServletRequest request, Long postId) {
 
         Long userId = userService.getUserIdFromSession(request);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("User not found or not logged in"));
 
         Optional<Post> deletePost = Optional.ofNullable(postRepository.getPostsById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
 
-        if(!userId.equals(deletePost.get().getUserId())){
+        if(!userId.equals(deletePost.get().getUserId()) && user.getUserType() != UserType.ADMIN){
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
         postRepository.deleteById(postId);
@@ -124,25 +123,22 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
     @Override
     @Transactional
     public void editPost(HttpServletRequest request, long postId, EditPostRequestDto dto) {
-
         Long userId = userService.getUserIdFromSession(request);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("User not found or not logged in"));
 
-        Optional<Post> updatePost = Optional.ofNullable(postRepository.getPostsById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found")));
+        Post updatePost = postRepository.getPostsById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("Post with ID " + postId + " not found"));
 
-        if(!userId.equals(updatePost.get().getUserId())){
+        if (!userId.equals(updatePost.getUserId()) && user.getUserType() != UserType.ADMIN) {
             throw new UnauthorizedException("Post with ID " + postId + " is not owned by user");
         }
 
-        updatePost.ifPresent(selectPost-> {
-            selectPost.setTitle(dto.getTitle());
-            selectPost.setBody(dto.getBody());
-            selectPost.setSubCategory(dto.getSubCategory());
-            selectPost.setPostStatus(dto.getPostStatus());
-            selectPost.setLastModified(LocalDateTime.now());
-
-            postRepository.save(selectPost);
-        });
+        updatePost.setTitle(dto.getTitle());
+        updatePost.setBody(dto.getBody());
+        updatePost.setSubCategory(dto.getSubCategory());
+        updatePost.setPostStatus(dto.getPostStatus());
+        updatePost.setLastModified(LocalDateTime.now());
     }
 
     @Override
