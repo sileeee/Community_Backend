@@ -95,6 +95,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
                 .subCategory(dto.getSubCategory())
                 .userId(userId)
                 .view(0L)
+                .thumbnailUrl(dto.getThumbnailUrl())
                 .postStatus(dto.getPostStatus())
                 .postType(dto.getPostType())
                 .lastModified(LocalDateTime.now())
@@ -138,6 +139,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
         updatePost.setBody(dto.getBody());
         updatePost.setSubCategory(dto.getSubCategory());
         updatePost.setPostStatus(dto.getPostStatus());
+        updatePost.setThumbnailUrl(dto.getThumbnailUrl());
         updatePost.setLastModified(LocalDateTime.now());
     }
 
@@ -168,6 +170,7 @@ public class GeneralPostService extends AbstractPostService<DetailedPost, Create
                 .postStatus(post.get().getPostStatus())
                 .createdAt(post.get().getCreatedAt())
                 .view(post.get().getView())
+                .thumbnailUrl(post.get().getThumbnailUrl())
                 .like(like)
                 .build();
     }

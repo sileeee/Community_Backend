@@ -3,6 +3,7 @@ package com.koreandubai.handubi.controller.dto;
 import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.PostType;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class CreatePostRequestDto {
     @Size(min = 1)
     private final String body;
 
+    @Column(name = "thumbnail_url")
     private final String thumbnailUrl;
 
     @NotNull(message = "You should choose sub category of post.")

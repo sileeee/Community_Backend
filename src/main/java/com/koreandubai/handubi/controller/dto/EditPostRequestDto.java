@@ -2,6 +2,7 @@ package com.koreandubai.handubi.controller.dto;
 
 import com.koreandubai.handubi.global.common.PostStatus;
 import com.koreandubai.handubi.global.common.SubCategoryType;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class EditPostRequestDto {
     @NotNull(message = "You should choose status of post.")
     private final PostStatus postStatus;
 
+    @Column(name = "thumbnail_url")
     private final String thumbnailUrl;
 
 
