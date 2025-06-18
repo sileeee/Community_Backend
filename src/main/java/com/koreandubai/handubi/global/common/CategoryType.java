@@ -9,7 +9,7 @@ public enum CategoryType {
     SECOND_HAND,
     REAL_ESTATE,
     ASIAN_MARKET,
-    TRAVEL,
+//    TRAVEL,
     CHILD_CARE,
     CLUB,
     FREE_BOARD,

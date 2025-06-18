@@ -37,6 +37,7 @@ public enum SubCategoryType {
     // Market
     KOREAN,
     ASIAN,
+    MARKET,
     GROUP,
 
     // Travel
@@ -61,6 +62,7 @@ public enum SubCategoryType {
     PARENTING,
     INVESTMENT,
     LAW,
+    TRAVEL_TIPS,
 
     // Club
     SPORT,
