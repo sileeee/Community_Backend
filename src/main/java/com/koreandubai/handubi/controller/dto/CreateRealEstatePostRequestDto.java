@@ -21,7 +21,6 @@ public class CreateRealEstatePostRequestDto {
     @NotNull(message = "You should choose sub category of post.")
     private final SubCategoryType subCategory;
 
-    @NotNull(message = "You should choose productType of post.")
     private final ProductType productType;
 
     @NotNull(message = "You should choose postStatus of post.")
