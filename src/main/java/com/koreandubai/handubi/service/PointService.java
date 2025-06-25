@@ -80,5 +80,11 @@ public class PointService {
     public List<RewardRequest> getUserRewards(Long userId) {
         return rewardRequestRepository.findAllByUserId(userId);
     }
+
+    public Integer getUserTotalPoints(Long userId) {
+        return userPointRepository.findByUserId(userId)
+                .map(UserPoint::getTotalPoints)
+                .orElse(0);
+    }
 }
 

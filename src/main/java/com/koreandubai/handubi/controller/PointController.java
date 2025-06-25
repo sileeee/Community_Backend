@@ -53,5 +53,16 @@ public class PointController {
                 .message("Successfully fetched reward requests")
                 .build();
     }
+
+    @AuthRequired
+    @GetMapping("/{id}/total")
+    public SuccessResponse getUserTotalPoints(@PathVariable("id") Long userId) {
+        int points = pointService.getUserTotalPoints(userId);
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully fetched total points")
+                .data(points)
+                .build();
+    }
 }
 
