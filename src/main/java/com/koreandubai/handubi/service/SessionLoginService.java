@@ -13,8 +13,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 
 @RequiredArgsConstructor
 @Service
@@ -25,53 +23,58 @@ public class SessionLoginService implements LoginService{
     private final Encryptor encryptor;
 
     @Override
-    public void login(SignInRequestDto dto){
+    public void login(SignInRequestDto dto, HttpServletRequest request) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("The email does not exist."));
 
-        if (userRepository.findByEmail(dto.getEmail()).isEmpty()){
-            throw new IllegalArgumentException("The email does not exist.");
-        }
-        Optional<User> user = userRepository.findByEmail(dto.getEmail());
         CryptoData cryptoData = CryptoData.WithSaltBuilder()
                 .plainText(dto.getPassword())
-                .salt(user.get().getSalt())
+                .salt(user.getSalt())
                 .build();
-        String encryptedPassword = encryptor.encrypt(cryptoData);
 
-        if(!encryptedPassword.equals(user.get().getPassword())){
+        if (!encryptor.encrypt(cryptoData).equals(user.getPassword())) {
             throw new IllegalArgumentException("The password is incorrect.");
         }
-        httpSession.setAttribute(SessionKey.LOGIN_USER_ID, user.get().getId());
+
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) oldSession.invalidate();
+
+        HttpSession newSession = request.getSession(true);
+        newSession.setAttribute(SessionKey.LOGIN_USER_ID, user.getId());
+        newSession.setAttribute(SessionKey.LOGIN_USER_ROLE, user.getUserType());
+        newSession.setAttribute(SessionKey.LOGIN_USER_NAME, user.getName());
     }
 
     @Override
     public void logout(){
-
-        httpSession.removeAttribute(SessionKey.LOGIN_USER_ID);
+        httpSession.invalidate();
     }
 
     @Override
     public AuthInfo isLoggedIn(HttpServletRequest request){
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return AuthInfo.builder()
+                    .isLoggedIn(false)
+                    .build();
+        }
 
         Long userId = (Long) session.getAttribute(SessionKey.LOGIN_USER_ID);
+        UserType role = (UserType) session.getAttribute(SessionKey.LOGIN_USER_ROLE);
+        String name = (String) session.getAttribute(SessionKey.LOGIN_USER_NAME);
 
-        String name = "";
-        boolean isLoggedIn = false;
-        UserType role = null;
-
-        if(userId != null){
-            User user = userRepository.findById(userId).get();
-            name = user.getName();
-            role = user.getUserType();
-            isLoggedIn = true;
+        if (userId == null || role == null) {
+            return AuthInfo.builder()
+                    .isLoggedIn(false)
+                    .build();
         }
 
         return AuthInfo.builder()
                 .userId(userId)
                 .name(name)
                 .role(role)
-                .isLoggedIn(isLoggedIn)
+                .isLoggedIn(true)
                 .build();
     }
 }

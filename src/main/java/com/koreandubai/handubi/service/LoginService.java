@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface LoginService {
 
-    void login(SignInRequestDto dto);
+    void login(SignInRequestDto dto, HttpServletRequest request);
 
     void logout();
 

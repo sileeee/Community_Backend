@@ -9,6 +9,7 @@ import com.koreandubai.handubi.global.common.SuccessResponse;
 import com.koreandubai.handubi.global.util.auth.AuthRequired;
 import com.koreandubai.handubi.service.LoginService;
 import com.koreandubai.handubi.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public SuccessResponse signIn(@Valid @RequestBody SignInRequestDto requestDto) {
+    public SuccessResponse signIn(@Valid @RequestBody SignInRequestDto requestDto, HttpServletRequest request) {
 
-        loginService.login(requestDto);
+        loginService.login(requestDto, request);
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Successfully login")
