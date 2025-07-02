@@ -2,9 +2,12 @@ package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.controller.dto.AddPointRequestDto;
 import com.koreandubai.handubi.controller.dto.RewardRequestDto;
+import com.koreandubai.handubi.domain.ActionType;
 import com.koreandubai.handubi.domain.PointHistory;
 import com.koreandubai.handubi.domain.RewardRequest;
 import com.koreandubai.handubi.domain.UserPoint;
+import com.koreandubai.handubi.global.common.ActionCode;
+import com.koreandubai.handubi.repository.ActionTypeRepository;
 import com.koreandubai.handubi.repository.PointHistoryRepository;
 import com.koreandubai.handubi.repository.RewardRequestRepository;
 import com.koreandubai.handubi.repository.UserPointRepository;
@@ -22,9 +25,16 @@ public class PointService {
     private final UserPointRepository userPointRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final RewardRequestRepository rewardRequestRepository;
+    private final ActionTypeRepository actionTypeRepository;
 
     @Transactional
     public void addPoint(AddPointRequestDto dto) {
+
+        ActionType actionType = actionTypeRepository.findById(dto.getActionTypeId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid actionTypeId"));
+
+        int delta = (dto.getPoints() != null) ? dto.getPoints()
+                : actionType.getDefaultPoint();
 
         UserPoint userPoint = userPointRepository.findByUserId(dto.getUserId())
                 .orElse(UserPoint.builder()
@@ -32,16 +42,17 @@ public class PointService {
                         .totalPoints(0)
                         .build());
 
-        userPoint.setTotalPoints(userPoint.getTotalPoints() + dto.getPoints());
+        userPoint.setTotalPoints(userPoint.getTotalPoints() + delta);
         userPoint.setUpdatedAt(LocalDateTime.now());
         userPointRepository.save(userPoint);
 
         PointHistory history = PointHistory.builder()
                 .userId(dto.getUserId())
-                .actionType(dto.getActionType())
-                .points(dto.getPoints())
+                .actionType(actionType)
+                .points(delta)
                 .referencePostId(dto.getReferencePostId())
                 .referenceCommentId(dto.getReferenceCommentId())
+                .referenceNote(dto.getReferenceNote())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -50,6 +61,7 @@ public class PointService {
 
     @Transactional
     public void requestReward(RewardRequestDto dto) {
+
         UserPoint userPoint = userPointRepository.findByUserId(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User point not found"));
 
@@ -63,7 +75,7 @@ public class PointService {
 
         RewardRequest reward = RewardRequest.builder()
                 .userId(dto.getUserId())
-                .rewardType(dto.getRewardType())
+                .productId(dto.getProductId())
                 .pointsUsed(dto.getPointsUsed())
                 .status(RewardRequest.RequestStatus.PENDING)
                 .createdAt(LocalDateTime.now())
@@ -71,6 +83,17 @@ public class PointService {
                 .build();
 
         rewardRequestRepository.save(reward);
+
+        ActionType redeemType = actionTypeRepository.findByActionCode(ActionCode.REWARD_REDEEM)
+                .orElseThrow(() -> new IllegalStateException("REWARD_REDEEM actionType missing"));
+
+        pointHistoryRepository.save(PointHistory.builder()
+                .userId(dto.getUserId())
+                .actionType(redeemType)
+                .points(-dto.getPointsUsed())
+                .referenceNote("RewardRequest#" + reward.getId())
+                .createdAt(LocalDateTime.now())
+                .build());
     }
 
     public List<PointHistory> getUserHistory(Long userId) {

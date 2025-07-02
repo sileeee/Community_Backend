@@ -2,5 +2,5 @@ package com.koreandubai.handubi.global.common;
 
 public class PageSize {
 
-    public static final int NOMAL_PAGE_SIZE = 20;
+    public static final int NOMAL_PAGE_SIZE = 1000;
 }

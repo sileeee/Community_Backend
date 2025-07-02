@@ -9,8 +9,12 @@ public class RewardRequestDto {
 
     private Long userId;
 
-    private String rewardType;
+    private Long productId;
 
     private Integer pointsUsed;
+
+    private Integer referencePostId;
+
+    private Integer referenceCommentId;
 }
 

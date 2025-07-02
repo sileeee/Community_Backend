@@ -1,6 +1,5 @@
 package com.koreandubai.handubi.controller.dto;
 
-import com.koreandubai.handubi.global.common.ActionType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +9,11 @@ public class AddPointRequestDto {
 
     private Long userId;
 
-    private ActionType actionType;
+    private Long actionTypeId;
 
     private Integer points;
+
+    private String referenceNote;
 
     private Long referencePostId;
 

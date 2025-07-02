@@ -19,11 +19,11 @@ public class RewardRequest {
 
     private Long userId;
 
-    @Column(name = "points_used")
-    private Integer pointsUsed;
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
 
-    @Column(name = "reward_type")
-    private String rewardType;
+    @Column(name = "points_used", nullable = false)
+    private Integer pointsUsed;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status = RequestStatus.PENDING;
@@ -34,15 +34,12 @@ public class RewardRequest {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public enum RequestStatus {
-        PENDING, APPROVED, REJECTED
-    }
+    public enum RequestStatus { PENDING, APPROVED, REJECTED, SHIPPED, CANCELLED, COMPLETE }
 
     @Builder
-    public RewardRequest(Long userId, Integer pointsUsed, String rewardType, RequestStatus status) {
+    public RewardRequest(Long userId, Integer pointsUsed, RequestStatus status) {
         this.userId = userId;
         this.pointsUsed = pointsUsed;
-        this.rewardType = rewardType;
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
