@@ -30,24 +30,36 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws UnauthorizedException {
         try {
             if (handler instanceof HandlerMethod handlerMethod) {
-                if (isNeedToAuth(handlerMethod)) {
-                    HttpSession session = request.getSession(false);
-                    if (session == null) throw new NoAuthorizationData();
 
-                    Long userIdBySession = getUserIdBySession(session);
-                    UserType role = (UserType) session.getAttribute(SessionKey.LOGIN_USER_ROLE);
-
-                    if (userIdBySession == null || role == null) {
-                        throw new NoAuthorizationData();
-                    }
-
-                    if (role == UserType.ADMIN) return true;
-
-                    String userIdByPath = getUserIdByPathVariable(request);
-                    if (!String.valueOf(userIdBySession).equals(userIdByPath)) {
-                        throw new UnauthorizedException();
-                    }
+                if (handlerMethod.getMethodAnnotation(AdminOnly.class) != null
+                        || handlerMethod.getBeanType().isAnnotationPresent(AdminOnly.class)) {
+                    checkAdmin(request.getSession());
+                    return true;
                 }
+
+                if (handlerMethod.getMethodAnnotation(AuthRequired.class) != null
+                        || handlerMethod.getBeanType().isAnnotationPresent(AuthRequired.class)) {
+                    checkUserOrAdminWithIdMatch(request);
+                }
+                return true;
+//                if (isNeedToAuth(handlerMethod)) {
+//                    HttpSession session = request.getSession(false);
+//                    if (session == null) throw new NoAuthorizationData();
+//
+//                    Long userIdBySession = getUserIdBySession(session);
+//                    UserType role = (UserType) session.getAttribute(SessionKey.LOGIN_USER_ROLE);
+//
+//                    if (userIdBySession == null || role == null) {
+//                        throw new NoAuthorizationData();
+//                    }
+//
+//                    if (role == UserType.ADMIN) return true;
+//
+//                    String userIdByPath = getUserIdByPathVariable(request);
+//                    if (!String.valueOf(userIdBySession).equals(userIdByPath)) {
+//                        throw new UnauthorizedException();
+//                    }
+//                }
             }
             return true;
         } catch (NoAuthorizationData | UnauthorizedException e) {
@@ -55,6 +67,30 @@ public class AuthInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             throw new UnauthorizedException(e);
         }
+    }
+
+    private void checkAdmin(HttpSession session) {
+        if (session == null) throw new NoAuthorizationData();
+        UserType role = (UserType) session.getAttribute(SessionKey.LOGIN_USER_ROLE);
+        System.out.println(role);
+        if (role != UserType.ADMIN) throw new UnauthorizedException();
+    }
+
+    private void checkUserOrAdminWithIdMatch(HttpServletRequest req) {
+        HttpSession session = req.getSession();
+        if (session == null) throw new NoAuthorizationData();
+
+        Long sessId = (Long) session.getAttribute(SessionKey.LOGIN_USER_ID);
+        UserType role = (UserType) session.getAttribute(SessionKey.LOGIN_USER_ROLE);
+        if (sessId == null || role == null) throw new NoAuthorizationData();
+        if (role == UserType.ADMIN) return;
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> vars = (Map<String, String>)
+                req.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        String pathId = vars == null ? null : vars.get("id");
+        if (!String.valueOf(sessId).equals(pathId)) throw new UnauthorizedException();
     }
 
     private boolean isNeedToAuth(HandlerMethod handler) {
