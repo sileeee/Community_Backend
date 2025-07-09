@@ -126,11 +126,6 @@ public class AdminService {
         productRepository.save(product);
     }
 
-    public List<Product> getActiveEvents() {
-        LocalDateTime now = LocalDateTime.now();
-        return productRepository.findByIsActiveTrueAndDeadlineAfterOrDeadlineIsNull(now);
-    }
-
     @Transactional
     public void activateProduct(Long productId) {
         Product product = productRepository.findById(productId)

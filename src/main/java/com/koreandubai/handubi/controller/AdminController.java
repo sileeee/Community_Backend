@@ -3,7 +3,7 @@ package com.koreandubai.handubi.controller;
 import com.koreandubai.handubi.controller.dto.ProductRegisterDto;
 import com.koreandubai.handubi.global.common.StatusEnum;
 import com.koreandubai.handubi.global.common.SuccessResponse;
-import com.koreandubai.handubi.global.util.auth.AuthRequired;
+import com.koreandubai.handubi.global.util.auth.AdminOnly;
 import com.koreandubai.handubi.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@AuthRequired
+@AdminOnly
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -74,15 +74,6 @@ public class AdminController {
         return SuccessResponse.builder()
                 .status(StatusEnum.OK)
                 .message("Event successfully ended")
-                .build();
-    }
-
-    @GetMapping("/product/active")
-    public SuccessResponse getActiveEvents() {
-        return SuccessResponse.builder()
-                .status(StatusEnum.OK)
-                .data(adminService.getActiveEvents())
-                .message("Active events fetched")
                 .build();
     }
 

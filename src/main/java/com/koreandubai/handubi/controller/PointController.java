@@ -55,6 +55,16 @@ public class PointController {
     }
 
     @AuthRequired
+    @PostMapping("/rewards/cancel")
+    public SuccessResponse cancelRewardRequests(@RequestBody RewardRequestDto dto) {
+        pointService.cancelUserRewards(dto);
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .message("Successfully fetched reward requests")
+                .build();
+    }
+
+    @AuthRequired
     @GetMapping("/{id}/total")
     public SuccessResponse getUserTotalPoints(@PathVariable("id") Long userId) {
         int points = pointService.getUserTotalPoints(userId);
@@ -62,6 +72,15 @@ public class PointController {
                 .status(StatusEnum.OK)
                 .message("Successfully fetched total points")
                 .data(points)
+                .build();
+    }
+
+    @GetMapping("/product/active")
+    public SuccessResponse getActiveEvents() {
+        return SuccessResponse.builder()
+                .status(StatusEnum.OK)
+                .data(pointService.getActiveEvents())
+                .message("Active events fetched")
                 .build();
     }
 }

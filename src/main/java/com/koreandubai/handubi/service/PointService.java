@@ -2,15 +2,9 @@ package com.koreandubai.handubi.service;
 
 import com.koreandubai.handubi.controller.dto.AddPointRequestDto;
 import com.koreandubai.handubi.controller.dto.RewardRequestDto;
-import com.koreandubai.handubi.domain.ActionType;
-import com.koreandubai.handubi.domain.PointHistory;
-import com.koreandubai.handubi.domain.RewardRequest;
-import com.koreandubai.handubi.domain.UserPoint;
+import com.koreandubai.handubi.domain.*;
 import com.koreandubai.handubi.global.common.ActionCode;
-import com.koreandubai.handubi.repository.ActionTypeRepository;
-import com.koreandubai.handubi.repository.PointHistoryRepository;
-import com.koreandubai.handubi.repository.RewardRequestRepository;
-import com.koreandubai.handubi.repository.UserPointRepository;
+import com.koreandubai.handubi.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +20,7 @@ public class PointService {
     private final PointHistoryRepository pointHistoryRepository;
     private final RewardRequestRepository rewardRequestRepository;
     private final ActionTypeRepository actionTypeRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public void addPoint(AddPointRequestDto dto) {
@@ -96,6 +91,41 @@ public class PointService {
                 .build());
     }
 
+    @Transactional
+    public void cancelUserRewards(RewardRequestDto dto) {
+        RewardRequest req = rewardRequestRepository
+                .findFirstByUserIdAndProductIdAndStatusOrderByCreatedAtDesc(
+                        dto.getUserId(),
+                        dto.getProductId(),
+                        RewardRequest.RequestStatus.PENDING)
+                .orElseThrow(() -> new IllegalStateException("No Pending reward request found"));
+
+        UserPoint up = userPointRepository.findByUserId(dto.getUserId())
+                .orElseThrow(() -> new IllegalStateException("UserPoint not found"));
+        up.setTotalPoints(up.getTotalPoints() + req.getPointsUsed());
+        up.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.findById(req.getProductId())
+                .ifPresent(p -> {
+                    p.setStockQty(p.getStockQty() + 1);
+                });
+
+        req.setStatus(RewardRequest.RequestStatus.CANCELLED);
+        req.setUpdatedAt(LocalDateTime.now());
+
+        ActionType redeemType = actionTypeRepository
+                .findByActionCode(ActionCode.REWARD_REDEEM)
+                .orElseThrow(() -> new IllegalStateException("No REDEEM actionType missing"));
+
+        pointHistoryRepository.save(PointHistory.builder()
+                .userId(dto.getUserId())
+                .actionType(redeemType)
+                .points(req.getPointsUsed())
+                .referenceNote("Reward Cancel #" + req.getId())
+                .createdAt(LocalDateTime.now())
+                .build());
+    }
+
     public List<PointHistory> getUserHistory(Long userId) {
         return pointHistoryRepository.findAllByUserId(userId);
     }
@@ -109,5 +139,11 @@ public class PointService {
                 .map(UserPoint::getTotalPoints)
                 .orElse(0);
     }
+
+    public List<Product> getActiveEvents() {
+        LocalDateTime now = LocalDateTime.now();
+        return productRepository.findByIsActiveTrueAndDeadlineIsNullOrIsActiveTrueAndDeadlineAfter(now);
+    }
+
 }
 
