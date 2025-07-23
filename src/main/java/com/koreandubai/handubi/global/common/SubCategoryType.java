@@ -50,6 +50,10 @@ public enum SubCategoryType {
     // child care
     EDUCATION,
     ACADEMY,
+    TODDLER,
+    ELEMENTARY,
+    MIDDLE,
+    MOM_TALK,
 
     // Life
     HOSPITAL,
@@ -84,5 +88,5 @@ public enum SubCategoryType {
     KOREAN_CAR,
     KOREAN_ACADEMY,
     KOREAN_ESTATE,
-    KOREAN_TRAVEL;
+    KOREAN_TRAVEL
 }
